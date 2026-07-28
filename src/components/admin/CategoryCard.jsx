@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trash2, Edit } from 'lucide-react';
 
-const CategoryCard = ({ cat, productCount, onDelete }) => {
+const CategoryCard = ({ cat, productCount, onDelete, onEdit }) => {
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-5 flex flex-col justify-between shadow-sm relative group hover:shadow-md transition-shadow">
       
@@ -38,7 +38,11 @@ const CategoryCard = ({ cat, productCount, onDelete }) => {
           
           {/* Action Controls */}
           <div className="flex items-center gap-1">
-            <button className="p-1 rounded text-slate-405 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <button 
+              onClick={() => onEdit(cat)}
+              className="p-1 rounded text-slate-405 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+              title="Edit Product Type"
+            >
               <Edit className="h-3.5 w-3.5" />
             </button>
             <button 

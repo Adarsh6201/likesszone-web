@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, Edit, Star, Tag } from 'lucide-react';
+import { Trash2, Edit, Star, Tag, Sparkles } from 'lucide-react';
 
-const ProductCatalogTable = ({ items = [], onDelete }) => {
+const ProductCatalogTable = ({ items = [], onDelete, onToggleFeatured }) => {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm border-collapse">
@@ -12,7 +12,7 @@ const ProductCatalogTable = ({ items = [], onDelete }) => {
             <th className="py-3 px-4">Category / Type</th>
             <th className="py-3 px-4 text-right">Price</th>
             <th className="py-3 px-4 text-center">Stock</th>
-            <th className="py-3 px-4 text-center">Rating</th>
+            <th className="py-3 px-4 text-center">Featured Exclusives</th>
             <th className="py-3 px-4 text-center">Actions</th>
           </tr>
         </thead>
@@ -49,10 +49,19 @@ const ProductCatalogTable = ({ items = [], onDelete }) => {
                 </span>
               </td>
               <td className="py-3.5 px-4 text-center">
-                <span className="inline-flex items-center gap-0.5 font-medium text-amber-500">
-                  <Star className="h-3.5 w-3.5 fill-current" />
-                  {prod.rating || 0}
-                </span>
+                <button
+                  type="button"
+                  onClick={() => onToggleFeatured && onToggleFeatured(prod)}
+                  className={`px-2.5 py-1 rounded-full transition-all inline-flex items-center gap-1 text-xs font-semibold ${
+                    prod.featured
+                      ? 'text-amber-700 bg-amber-100 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800 shadow-sm'
+                      : 'text-slate-400 bg-slate-100 dark:bg-slate-800 hover:text-amber-500 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                  title={prod.featured ? 'Featured on Home Page (Click to remove)' : 'Mark as Featured on Home Page'}
+                >
+                  <Sparkles className={`h-3.5 w-3.5 ${prod.featured ? 'fill-amber-400 text-amber-500' : ''}`} />
+                  <span>{prod.featured ? 'Featured' : 'Standard'}</span>
+                </button>
               </td>
               <td className="py-3.5 px-4 text-center">
                 <div className="flex items-center justify-center gap-2">

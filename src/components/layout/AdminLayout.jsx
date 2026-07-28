@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   LayoutDashboard, ShoppingCart, ShoppingBag, LogOut, ArrowLeft,
-  ChevronLeft, ChevronRight, Menu, Bell, User, Shield, Sun, Moon, Tag
+  ChevronLeft, ChevronRight, Menu, Bell, User, Shield, Sun, Moon, Tag, Sparkles
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
 
@@ -42,6 +42,11 @@ const AdminLayout = () => {
       name: 'Orders',
       path: '/admin/orders',
       icon: ShoppingCart,
+    },
+    {
+      name: 'Schemes & Offers',
+      path: '/admin/schemes',
+      icon: Sparkles,
     },
   ];
 

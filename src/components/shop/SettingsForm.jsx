@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Lock, Mail, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
+
+// CountriesNow API endpoints will be fetched dynamically for countries/states/cities
 
 const SettingsForm = ({ user, onUpdateProfile, onChangePassword }) => {
   const [activeTab, setActiveTab] = useState('profile');
-  
+
   // Profile state
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: user?.phone || '9304264241',
-    address: user?.address || 'New Area 1st Gali, Okni near Joda shiv temple, Ward 20',
+    phone: user?.phone || '',
+    address: user?.address || '',
+    city: user?.city || '',
+    state: user?.state || '',
+    zipCode: user?.zipCode || '',
     avatar: user?.avatar || ''
   });
 
@@ -24,9 +29,99 @@ const SettingsForm = ({ user, onUpdateProfile, onChangePassword }) => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [isSaving, setIsSaving] = useState(false);
 
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+
+  // States and Cities list loaded dynamically from third-party API
+  const [statesList, setStatesList] = useState([]);
+  const [citiesList, setCitiesList] = useState([]);
+  const [loadingStates, setLoadingStates] = useState(false);
+  const [loadingCities, setLoadingCities] = useState(false);
+
+  const fetchStates = async () => {
+    setLoadingStates(true);
+    try {
+      const response = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ country: 'India' })
+      });
+      const data = await response.json();
+      if (!data.error) {
+        const fetchedStates = data.data.states.map(s => s.name);
+        setStatesList(fetchedStates);
+      }
+    } catch (error) {
+      console.error('Failed to fetch states:', error);
+    } finally {
+      setLoadingStates(false);
+    }
+  };
+
+  const fetchCities = async (stateName) => {
+    if (!stateName) {
+      setCitiesList([]);
+      return;
+    }
+    setLoadingCities(true);
+    try {
+      const response = await fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ country: 'India', state: stateName })
+      });
+      const data = await response.json();
+      if (!data.error) {
+        setCitiesList(data.data);
+      } else {
+        setCitiesList([]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch cities:', error);
+      setCitiesList([]);
+    } finally {
+      setLoadingCities(false);
+    }
+  };
+
+  // Load states on mount
+  useEffect(() => {
+    fetchStates();
+  }, []);
+
+  // Derive dynamic list of states and cities, ensuring database values are preserved
+  const displayStates = [...statesList];
+  if (profileData.state && !displayStates.includes(profileData.state)) {
+    displayStates.push(profileData.state);
+  }
+
+  const displayCities = [...citiesList];
+  if (profileData.city && !displayCities.includes(profileData.city)) {
+    displayCities.push(profileData.city);
+  }
+
+  // Sync state with user prop when it loads or changes
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        city: user.city || '',
+        state: user.state || '',
+        zipCode: user.zipCode || '',
+        avatar: user.avatar || ''
+      });
+      if (user.state) {
+        fetchCities(user.state);
+      }
+    }
+  }, [user]);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setProfilePictureFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfileData(prev => ({ ...prev, avatar: reader.result }));
@@ -40,10 +135,20 @@ const SettingsForm = ({ user, onUpdateProfile, onChangePassword }) => {
     setIsSaving(true);
     setMessage({ type: '', text: '' });
     try {
-      await onUpdateProfile(profileData);
+      await onUpdateProfile({
+        name: profileData.name,
+        email: profileData.email,
+        phone: profileData.phone,
+        address: profileData.address,
+        city: profileData.city,
+        state: profileData.state,
+        zipCode: profileData.zipCode,
+        profilePicture: profilePictureFile
+      });
       setMessage({ type: 'success', text: 'Profile details updated successfully!' });
+      setProfilePictureFile(null); // Reset file selection after successful update
     } catch (err) {
-      setMessage({ type: 'error', text: 'Failed to update profile.' });
+      setMessage({ type: 'error', text: err.message || 'Failed to update profile.' });
     } finally {
       setIsSaving(false);
     }
@@ -210,6 +315,59 @@ const SettingsForm = ({ user, onUpdateProfile, onChangePassword }) => {
                   onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900 resize-none"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-500">
+                    State {loadingStates && <span className="text-[10px] text-indigo-500 animate-pulse">(Loading...)</span>}
+                  </label>
+                  <select
+                    value={profileData.state}
+                    disabled={loadingStates}
+                    onChange={(e) => {
+                      const selectedState = e.target.value;
+                      setProfileData(prev => ({ 
+                        ...prev, 
+                        state: selectedState, 
+                        city: '' 
+                      }));
+                      fetchCities(selectedState);
+                    }}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900"
+                  >
+                    <option value="">Select State</option>
+                    {displayStates.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-500">
+                    City {loadingCities && <span className="text-[10px] text-indigo-500 animate-pulse">(Loading...)</span>}
+                  </label>
+                  <select
+                    value={profileData.city}
+                    disabled={!profileData.state || loadingCities}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, city: e.target.value }))}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900 disabled:opacity-50"
+                  >
+                    <option value="">{profileData.state ? (loadingCities ? 'Loading cities...' : 'Select City') : 'Choose State First'}</option>
+                    {displayCities.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-500">Zip / Postal Code</label>
+                  <input
+                    type="text"
+                    value={profileData.zipCode}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, zipCode: e.target.value }))}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900"
+                    placeholder="Enter zip code"
+                  />
+                </div>
               </div>
             </div>
 

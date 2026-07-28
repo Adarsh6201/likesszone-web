@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useCart } from '../../context/CartContext';
-import { useProducts } from '../../context/ProductContext';
+﻿import React, { useState } from 'react';
+import { useCart } from '../../hooks/useCart';
+import { useProducts } from '../../hooks/useProducts';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import CheckoutSuccess from '../../components/shop/CheckoutSuccess';

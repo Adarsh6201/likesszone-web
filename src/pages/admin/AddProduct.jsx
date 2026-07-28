@@ -1,6 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useProducts } from '../../context/ProductContext';
+import { useProducts } from '../../hooks/useProducts';
 import { ArrowLeft } from 'lucide-react';
 import ProductForm from '../../components/admin/ProductForm';
 

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useProducts } from '../../context/ProductContext';
-import { useCart } from '../../context/CartContext';
+import { useProducts } from '../../hooks/useProducts';
+import { useCart } from '../../hooks/useCart';
 import ProductCard from '../../components/shop/ProductCard';
 import ProductFiltersSidebar from '../../components/shop/ProductFiltersSidebar';
 

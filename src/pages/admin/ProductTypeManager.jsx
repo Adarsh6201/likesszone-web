@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
-import { useProducts } from '../../context/ProductContext';
+﻿import React, { useState } from 'react';
+import { useProducts } from '../../hooks/useProducts';
 import { Plus } from 'lucide-react';
 import CategoryCreatorForm from '../../components/admin/CategoryCreatorForm';
 import CategoryCard from '../../components/admin/CategoryCard';
 
 const ProductTypeManager = () => {
-  const { categories, products, addCategory, deleteCategory } = useProducts();
+  const { categories, products, addCategory, deleteCategory, updateCategory } = useProducts();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const getProductCount = (categorySlug) => {
     return products.filter(p => p.category === categorySlug).length;
+  };
+
+  const handleEditClick = (category) => {
+    setEditingCategory(category);
+    setIsFormOpen(true);
+  };
+
+  const handleFormClose = () => {
+    setIsFormOpen(false);
+    setEditingCategory(null);
   };
 
   return (
@@ -22,11 +33,17 @@ const ProductTypeManager = () => {
           <p className="text-sm text-slate-500 mt-1">Add or classify items catalog using an Amazon-style visual structure.</p>
         </div>
         <button
-          onClick={() => setIsFormOpen(!isFormOpen)}
+          onClick={() => {
+            if (isFormOpen) {
+              handleFormClose();
+            } else {
+              setIsFormOpen(true);
+            }
+          }}
           className="flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 shadow-md shadow-indigo-100 dark:shadow-none transition-all"
         >
           <Plus className="h-4.5 w-4.5" />
-          {isFormOpen ? 'Collapse Creator' : 'Add Product Type'}
+          {isFormOpen ? (editingCategory ? 'Collapse Editor' : 'Collapse Creator') : 'Add Product Type'}
         </button>
       </div>
 
@@ -35,7 +52,9 @@ const ProductTypeManager = () => {
         <CategoryCreatorForm 
           categories={categories}
           onAddCategory={addCategory}
-          onClose={() => setIsFormOpen(false)}
+          onUpdateCategory={updateCategory}
+          initialCategory={editingCategory}
+          onClose={handleFormClose}
         />
       )}
 
@@ -47,6 +66,7 @@ const ProductTypeManager = () => {
             cat={cat}
             productCount={getProductCount(cat.slug)}
             onDelete={deleteCategory}
+            onEdit={handleEditClick}
           />
         ))}
       </div>

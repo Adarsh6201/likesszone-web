@@ -1,6 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import SettingsForm from '../../components/shop/SettingsForm';
 import { ShieldAlert } from 'lucide-react';
 

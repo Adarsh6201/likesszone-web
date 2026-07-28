@@ -1,5 +1,5 @@
-import React from 'react';
-import { useCart } from '../../context/CartContext';
+﻿import React from 'react';
+import { useCart } from '../../hooks/useCart';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingBag } from 'lucide-react';
 import CartList from '../../components/shop/CartList';

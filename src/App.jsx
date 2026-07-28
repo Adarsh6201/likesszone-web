@@ -1,8 +1,5 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import { ProductProvider } from './context/ProductContext';
 
 // Layouts
 import StoreLayout from './components/layout/StoreLayout';
@@ -26,63 +23,60 @@ import Settings from './pages/shop/Settings';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
+// Admin Pages
 import DashboardOverview from './pages/admin/DashboardOverview';
 import ProductManager from './pages/admin/ProductManager';
 import OrderManager from './pages/admin/OrderManager';
 import ProductTypeManager from './pages/admin/ProductTypeManager';
 import AddProduct from './pages/admin/AddProduct';
 import EditProduct from './pages/admin/EditProduct';
+import SchemeManager from './pages/admin/SchemeManager';
 
 function App() {
   return (
-    <AuthProvider>
-      <ProductProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <Routes>
-            
-            {/* Storefront Customer Routes */}
-            <Route path="/" element={<StoreLayout />}>
-              <Route index element={<Home />} />
-              <Route path="shop" element={<ProductList />} />
-              <Route path="product/:id" element={<ProductDetail />} />
-              <Route path="cart" element={<Cart />} />
-              <Route path="checkout" element={<Checkout />} />
-              <Route path="about" element={<About />} />
-              <Route path="policies" element={<Policies />} />
-              <Route path="orders" element={<MyOrders />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
+    <BrowserRouter>
+      <Routes>
 
-            {/* Standalone Auth Routes without Header/Footer */}
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
+        {/* Storefront Customer Routes */}
+        <Route path="/" element={<StoreLayout />}>
+          <Route index element={<Home />} />
+          <Route path="shop" element={<ProductList />} />
+          <Route path="product/:id" element={<ProductDetail />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="about" element={<About />} />
+          <Route path="policies" element={<Policies />} />
+          <Route path="orders" element={<MyOrders />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
 
-            {/* Admin Management Panel (Protected Routes) */}
-            <Route 
-              path="/admin" 
-              element={
-                <AdminRoute>
-                  <AdminLayout />
-                </AdminRoute>
-              }
-            >
-              <Route index element={<DashboardOverview />} />
-              <Route path="product-types" element={<ProductTypeManager />} />
-              <Route path="products" element={<ProductManager />} />
-              <Route path="products/new" element={<AddProduct />} />
-              <Route path="products/edit/:id" element={<EditProduct />} />
-              <Route path="orders" element={<OrderManager />} />
-            </Route>
+        {/* Standalone Auth Routes without Header/Footer */}
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
 
-            {/* Fallback Catch-All Redirect */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Admin Management Panel (Protected Routes) */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<DashboardOverview />} />
+          <Route path="product-types" element={<ProductTypeManager />} />
+          <Route path="products" element={<ProductManager />} />
+          <Route path="products/new" element={<AddProduct />} />
+          <Route path="products/edit/:id" element={<EditProduct />} />
+          <Route path="orders" element={<OrderManager />} />
+          <Route path="schemes" element={<SchemeManager />} />
+        </Route>
 
-          </Routes>
-        </BrowserRouter>
-      </CartProvider>
-    </ProductProvider>
-  </AuthProvider>
+        {/* Fallback Catch-All Redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
+      </Routes>
+    </BrowserRouter>
   );
 }
 

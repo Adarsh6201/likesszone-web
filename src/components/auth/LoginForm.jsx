@@ -20,21 +20,23 @@ const LoginForm = ({ onSubmit, loading }) => {
           <input
             type="email"
             required
+            autoComplete="off"
             placeholder="email@likesszon.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-880 dark:text-white dark:focus:bg-slate-900"
           />
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-xs font-semibold text-slate-500">Password</label>
+        <label className="text-xs font-semibold text-slate-505">Password</label>
         <div className="relative">
           <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             type={showPassword ? 'text' : 'password'}
             required
+            autoComplete="new-password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

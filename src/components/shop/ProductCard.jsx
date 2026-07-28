@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 
 const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add to Cart' }) => {
   const mrp = product.originalPrice || product.price;

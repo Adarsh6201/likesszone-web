@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { useProducts } from '../../context/ProductContext';
+import { useProducts } from '../../hooks/useProducts';
 import { Package, ChevronRight } from 'lucide-react';
 import OrderSearchSidebar from '../../components/shop/OrderSearchSidebar';
 import OrderTrackingPanel from '../../components/shop/OrderTrackingPanel';

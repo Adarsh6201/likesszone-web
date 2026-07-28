@@ -1,11 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useProducts } from '../../context/ProductContext';
+import { useProducts } from '../../hooks/useProducts';
 import { Plus } from 'lucide-react';
 import ProductCatalogTable from '../../components/admin/ProductCatalogTable';
 
 const ProductManager = () => {
-  const { products: items, deleteProduct } = useProducts();
+  const { products: items, deleteProduct, updateProduct } = useProducts();
+
+  const handleToggleFeatured = async (product) => {
+    try {
+      await updateProduct(product.id, { featured: !product.featured });
+    } catch (err) {
+      alert('Failed to update featured status');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -27,6 +35,7 @@ const ProductManager = () => {
         <ProductCatalogTable 
           items={items}
           onDelete={deleteProduct}
+          onToggleFeatured={handleToggleFeatured}
         />
       </div>
     </div>

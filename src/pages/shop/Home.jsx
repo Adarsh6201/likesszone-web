@@ -1,6 +1,6 @@
-import React from 'react';
-import { useProducts } from '../../context/ProductContext';
-import { useCart } from '../../context/CartContext';
+import React, { useEffect } from 'react';
+import { useProducts } from '../../hooks/useProducts';
+import { useCart } from '../../hooks/useCart';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductCard from '../../components/shop/ProductCard';
@@ -8,10 +8,24 @@ import HomeHeroBanner from '../../components/shop/HomeHeroBanner';
 
 const Home = () => {
   const { addToCart } = useCart();
-  const { products, categories } = useProducts();
+  const { products, categories, fetchProducts, fetchCategories } = useProducts();
   const navigate = useNavigate();
 
-  const featuredProducts = products.filter(p => p.featured);
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
+
+  // Explicitly featured products marked by admin
+  const explicitFeatured = products.filter((p) => p.featured);
+  
+  // Show explicitly featured products. If admin has marked none, fallback to top products.
+  const featuredProducts = explicitFeatured.length > 0 
+    ? explicitFeatured 
+    : products.slice(0, 4);
+
+  // Sorted categories A-Z
+  const sortedCategories = [...categories].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
   return (
     <div className="space-y-12 pb-16">
@@ -25,7 +39,7 @@ const Home = () => {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Shop by Category</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {categories.map((cat) => (
+          {sortedCategories.map((cat) => (
             <div
               key={cat.id}
               onClick={() => {

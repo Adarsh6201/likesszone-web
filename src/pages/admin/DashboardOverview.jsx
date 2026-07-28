@@ -1,13 +1,12 @@
-import React from 'react';
-import { useProducts } from '../../context/ProductContext';
-import { orders } from '../../data/mockData';
+﻿import React from 'react';
+import { useProducts } from '../../hooks/useProducts';
 import { useNavigate } from 'react-router-dom';
 import StatsGrid from '../../components/admin/StatsGrid';
 import RecentTransactionsTable from '../../components/admin/RecentTransactionsTable';
 
 const DashboardOverview = () => {
   const navigate = useNavigate();
-  const { products } = useProducts();
+  const { products, orders } = useProducts();
 
   // Statistics
   const totalRevenue = orders.reduce((sum, o) => o.paymentStatus === 'Paid' ? sum + o.total : sum, 0);

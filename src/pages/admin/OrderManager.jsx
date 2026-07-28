@@ -1,5 +1,5 @@
-import React from 'react';
-import { useProducts } from '../../context/ProductContext';
+﻿import React from 'react';
+import { useProducts } from '../../hooks/useProducts';
 import OrdersTable from '../../components/admin/OrdersTable';
 
 const OrderManager = () => {

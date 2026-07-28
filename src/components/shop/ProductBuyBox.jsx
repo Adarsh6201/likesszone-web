@@ -1,6 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import { Truck, Calendar, Lock, CreditCard } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const ProductBuyBox = ({ product, quantity, onQuantityChange, onAddToCart, onBuyNow }) => {

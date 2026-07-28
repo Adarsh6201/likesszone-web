@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Trash2, Image as ImageIcon, ListPlus, UploadCloud } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon, ListPlus, UploadCloud, Sparkles } from 'lucide-react';
 
 const ProductForm = ({ categories = [], initialProduct = null, onSubmit, submitLabel = 'Submit', cancelUrl = '/admin/products' }) => {
   // Form States
@@ -10,6 +10,7 @@ const ProductForm = ({ categories = [], initialProduct = null, onSubmit, submitL
   const [stock, setStock] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
+  const [featured, setFeatured] = useState(false);
   const [imagesList, setImagesList] = useState([]);
   const [featuresList, setFeaturesList] = useState(['']);
 
@@ -22,10 +23,12 @@ const ProductForm = ({ categories = [], initialProduct = null, onSubmit, submitL
       setStock(initialProduct.stock !== undefined ? initialProduct.stock.toString() : '');
       setCategory(initialProduct.category || categories?.[0]?.slug || 'computer-accessories-and-components');
       setDescription(initialProduct.description || '');
+      setFeatured(!!initialProduct.featured);
       setImagesList(initialProduct.images || (initialProduct.image ? [initialProduct.image] : []));
       setFeaturesList(initialProduct.features && initialProduct.features.length > 0 ? initialProduct.features : ['']);
     } else {
       setCategory(categories?.[0]?.slug || 'computer-accessories-and-components');
+      setFeatured(false);
     }
   }, [initialProduct, categories]);
 
@@ -91,6 +94,7 @@ const ProductForm = ({ categories = [], initialProduct = null, onSubmit, submitL
       images: imagesList.length > 0 ? imagesList : [defaultImage],
       features: cleanedFeatures,
       stock: parseInt(stock) || 0,
+      featured,
     };
 
     onSubmit(productPayload);
@@ -191,6 +195,21 @@ const ProductForm = ({ categories = [], initialProduct = null, onSubmit, submitL
             onChange={(e) => setDescription(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
           />
+        </div>
+
+        {/* Featured Toggle */}
+        <div className="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <input
+            type="checkbox"
+            id="featured"
+            checked={featured}
+            onChange={(e) => setFeatured(e.target.checked)}
+            className="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 cursor-pointer"
+          />
+          <label htmlFor="featured" className="text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer flex items-center gap-1.5">
+            <Sparkles className="h-4 w-4 text-amber-500" />
+            Mark as Featured Exclusive Product (Displays in "Featured Exclusives" section on Home Page)
+          </label>
         </div>
       </div>
 

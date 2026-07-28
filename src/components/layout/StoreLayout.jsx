@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useCart } from '../../hooks/useCart';
 import { 
   ShoppingBag, Search, User, X, Plus, Minus, Trash2, 
   ArrowRight, Shield, LogOut, Sun, Moon, ShoppingCart, Menu, Settings
@@ -119,7 +119,7 @@ const StoreLayout = () => {
                   className="flex items-center gap-1.5 focus:outline-none"
                 >
                   <img 
-                    src={user.avatar} 
+                    src={user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'} 
                     alt={user.name} 
                     className="h-8 w-8 rounded-full border border-indigo-500 object-cover" 
                   />
@@ -288,7 +288,6 @@ const StoreLayout = () => {
                                 ₹{(item.price * item.quantity).toFixed(2)}
                               </p>
                             </div>
-                            <p className="mt-1 text-xs text-slate-500 capitalize">{item.category.replace('-', ' ')}</p>
                           </div>
                           <div className="flex items-center justify-between text-xs">
                             <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800">

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import LoginForm from '../../components/auth/LoginForm';
-import QuickLoginPanel from '../../components/auth/QuickLoginPanel';
 import LogoImage from '../../assets/logo.png';
 
 const Login = () => {
@@ -22,18 +21,6 @@ const Login = () => {
   }, [isAuthenticated, navigate, user, location]);
 
   const handleLoginFormSubmit = async (email, password) => {
-    setFormError('');
-    setLoading(true);
-    try {
-      await login(email, password);
-    } catch (err) {
-      setFormError(err.message || 'Login failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleQuickLoginSubmit = async (email, password) => {
     setFormError('');
     setLoading(true);
     try {
@@ -77,10 +64,6 @@ const Login = () => {
         <LoginForm 
           onSubmit={handleLoginFormSubmit}
           loading={loading}
-        />
-
-        <QuickLoginPanel 
-          onQuickLogin={handleQuickLoginSubmit}
         />
 
         <div className="text-center text-xs text-slate-500">

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { ShoppingCart } from 'lucide-react';
 import RegisterForm from '../../components/auth/RegisterForm';
 
 const Register = () => {
-  const { register, isAuthenticated } = useAuth();
+  const { register, isAuthenticated, error } = useAuth();
+  const [formError, setFormError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -15,13 +16,14 @@ const Register = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleRegisterSubmit = async (name, email, password) => {
+  const handleRegisterSubmit = async (name, email, password, phone, profilePicture, role) => {
+    setFormError('');
     setLoading(true);
     try {
-      await register(name, email, password);
+      await register(name, email, password, phone, profilePicture, role);
       navigate('/');
     } catch (err) {
-      console.error(err);
+      setFormError(err.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
@@ -39,6 +41,13 @@ const Register = () => {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Create an Account</h2>
           <p className="text-xs text-slate-500">Sign up to buy exclusive watchwear and tech items.</p>
         </div>
+
+        {/* Global errors */}
+        {(formError || error) && (
+          <div className="rounded-xl bg-red-50 dark:bg-red-950/20 px-4 py-3 text-xs text-red-700 dark:text-red-300 border border-red-100 dark:border-red-900/40">
+            {formError || error}
+          </div>
+        )}
 
         <RegisterForm 
           onSubmit={handleRegisterSubmit}
