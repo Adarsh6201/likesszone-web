@@ -7,7 +7,7 @@ const BASE_URL = 'http://localhost:5000/api';
  */
 export const request = async (endpoint, options = {}) => {
   const url = `${BASE_URL}${endpoint}`;
-  
+
   // Set default headers
   const headers = { ...options.headers };
 

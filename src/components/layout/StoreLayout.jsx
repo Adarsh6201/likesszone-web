@@ -1,10 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
 import { 
   ShoppingBag, Search, User, X, Plus, Minus, Trash2, 
-  ArrowRight, Shield, LogOut, Sun, Moon, ShoppingCart, Menu, Settings
+  ArrowRight, Shield, LogOut, Sun, Moon, ShoppingCart, Menu, Settings,
+  Phone, MapPin
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
 
@@ -363,6 +364,17 @@ const StoreLayout = () => {
             <div className="space-y-4">
               <span className="text-xl font-bold tracking-tight text-white">Likesszon Shopping</span>
               <p className="text-sm">Your ultimate online shopping destination for premium computer accessories, electrical equipment, cameras, and unique lifestyle products.</p>
+              
+              <div className="space-y-2 pt-2 border-t border-slate-800 text-xs">
+                <p className="flex items-center gap-2 text-slate-300 font-semibold">
+                  <Phone className="h-4 w-4 text-indigo-400 shrink-0" />
+                  <span>Contact Us: <a href="tel:9304264241" className="text-white hover:underline">+91 9304264241</a></span>
+                </p>
+                <p className="flex items-start gap-2 text-slate-300 leading-relaxed">
+                  <MapPin className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
+                  <span><strong>Visit Us:</strong> New Area 1St Gali Okni near Joda shiv temple ward 20, Hazaribagh, Jharkhand, 825301</span>
+                </p>
+              </div>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-white tracking-wider uppercase mb-4">Catalog</h3>

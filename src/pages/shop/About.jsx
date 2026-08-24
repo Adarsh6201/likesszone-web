@@ -1,6 +1,7 @@
 import React from 'react';
 import LogoImage from '../../assets/logo.png';
 import AboutBenefits from '../../components/shop/AboutBenefits';
+import { Phone, MapPin } from 'lucide-react';
 
 const About = () => {
   return (
@@ -37,6 +38,37 @@ const About = () => {
 
       {/* Why Shop Cards Grid */}
       <AboutBenefits />
+
+      {/* Contact & Store Location Card */}
+      <section className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-8 shadow-sm space-y-6">
+        <h2 className="text-xl md:text-2xl font-black tracking-tight">Visit Us & Get In Touch</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+          <div className="flex items-start gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            <div className="p-3 rounded-xl bg-indigo-600 text-white shrink-0">
+              <Phone className="h-6 w-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-base">Contact Us</h3>
+              <p className="text-slate-300">Have questions or need assistance? Call our dedicated support line:</p>
+              <a href="tel:9304264241" className="inline-block text-indigo-400 font-bold text-lg hover:underline mt-1">
+                +91 9304264241
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            <div className="p-3 rounded-xl bg-indigo-600 text-white shrink-0">
+              <MapPin className="h-6 w-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-base">Visit Us</h3>
+              <p className="text-slate-300 leading-relaxed">
+                New Area 1St Gali Okni near Joda shiv temple ward 20, Hazaribagh, Jharkhand, 825301
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Bottom invitation */}
       <section className="text-center py-6">

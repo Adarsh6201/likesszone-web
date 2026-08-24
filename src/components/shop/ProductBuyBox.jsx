@@ -1,26 +1,13 @@
-﻿import React from 'react';
+import React from 'react';
 import { Truck, Calendar, Lock, CreditCard } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 const ProductBuyBox = ({ product, quantity, onQuantityChange, onAddToCart, onBuyNow }) => {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
   const handleAddToCartClick = () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    } else {
-      onAddToCart();
-    }
+    onAddToCart();
   };
 
   const handleBuyNowClick = () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    } else {
-      onBuyNow();
-    }
+    onBuyNow();
   };
 
   return (
@@ -38,7 +25,7 @@ const ProductBuyBox = ({ product, quantity, onQuantityChange, onAddToCart, onBuy
         </div>
 
         {/* Delivery Dates details */}
-        <div className="space-y-3 text-xs text-slate-655 dark:text-slate-300">
+        <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
           <div className="flex items-start gap-2">
             <Truck className="h-4.5 w-4.5 shrink-0 text-slate-400" />
             <div>
@@ -80,7 +67,7 @@ const ProductBuyBox = ({ product, quantity, onQuantityChange, onAddToCart, onBuy
             <select
               value={quantity}
               onChange={(e) => onQuantityChange(parseInt(e.target.value))}
-              className="rounded-lg border border-slate-200 bg-white py-1 px-2.5 outline-none dark:border-slate-800 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold"
+              className="rounded-lg border border-slate-200 bg-white py-1 px-2.5 outline-none dark:border-slate-800 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold cursor-pointer"
             >
               {[...Array(Math.min(10, product.stock))].map((_, i) => (
                 <option key={i + 1} value={i + 1}>
@@ -111,7 +98,7 @@ const ProductBuyBox = ({ product, quantity, onQuantityChange, onAddToCart, onBuy
         </div>
 
         {/* Secure Transaction badge */}
-        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-2 text-[10px] text-slate-405">
+        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-2 text-[10px] text-slate-400">
           <div className="flex items-center gap-1.5">
             <Lock className="h-3.5 w-3.5 text-slate-400" />
             <span>Secure Transaction</span>
@@ -128,4 +115,3 @@ const ProductBuyBox = ({ product, quantity, onQuantityChange, onAddToCart, onBuy
 };
 
 export default ProductBuyBox;
-export { ProductBuyBox };

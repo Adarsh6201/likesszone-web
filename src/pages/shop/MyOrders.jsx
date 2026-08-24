@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
 import { Package, ChevronRight } from 'lucide-react';
@@ -39,7 +39,7 @@ const MyOrders = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
+
       {/* Navigation Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-slate-500 capitalize">
         <Link to="/" className="hover:text-indigo-600">Home</Link>
@@ -49,8 +49,8 @@ const MyOrders = () => {
 
       {/* Main Grid: Lookup search & Details tracking panel */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <OrderSearchSidebar 
+
+        <OrderSearchSidebar
           searchId={searchId}
           onSearchIdChange={setSearchId}
           onSearchSubmit={handleSearchSubmit}
@@ -61,15 +61,16 @@ const MyOrders = () => {
 
         {/* Right Column: Tracking Progress Details */}
         <div className="lg:col-span-8">
-          
+
           {selectedOrder ? (
             <div className="space-y-6">
-              <OrderTrackingPanel 
+              <OrderTrackingPanel
                 order={selectedOrder}
               />
-              <OrderItemsInvoice 
+              <OrderItemsInvoice
                 items={selectedOrder.items}
                 products={products}
+                order={selectedOrder}
               />
             </div>
           ) : (

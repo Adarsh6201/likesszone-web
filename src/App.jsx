@@ -31,6 +31,9 @@ import ProductTypeManager from './pages/admin/ProductTypeManager';
 import AddProduct from './pages/admin/AddProduct';
 import EditProduct from './pages/admin/EditProduct';
 import SchemeManager from './pages/admin/SchemeManager';
+import InvoiceManager from './pages/admin/InvoiceManager';
+import PaymentHistoryManager from './pages/admin/PaymentHistoryManager';
+import LedgerManager from './pages/admin/LedgerManager';
 
 function App() {
   return (
@@ -69,6 +72,9 @@ function App() {
           <Route path="products/new" element={<AddProduct />} />
           <Route path="products/edit/:id" element={<EditProduct />} />
           <Route path="orders" element={<OrderManager />} />
+          <Route path="invoices" element={<InvoiceManager />} />
+          <Route path="payment-history" element={<PaymentHistoryManager />} />
+          <Route path="ledger" element={<LedgerManager />} />
           <Route path="schemes" element={<SchemeManager />} />
         </Route>
 

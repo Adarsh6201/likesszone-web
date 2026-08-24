@@ -11,6 +11,7 @@ import {
   deleteCategoryThunk,
 } from '../store/slices/productSlice';
 import {
+  fetchOrdersThunk,
   addOrderThunk,
   updateOrderThunk,
 } from '../store/slices/orderSlice';
@@ -33,13 +34,16 @@ export const useProducts = () => {
     dispatch(fetchCategoriesThunk());
   }, [dispatch]);
 
+  const fetchOrders = useCallback(() => {
+    dispatch(fetchOrdersThunk());
+  }, [dispatch]);
+
   // ── Products ──────────────────────────────────────────────────────────────
 
   const addProduct = useCallback(async (productData) => {
     const result = await dispatch(addProductThunk(productData));
     if (addProductThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to add product';
-      alert(msg);
       throw new Error(msg);
     }
     return result.payload;
@@ -49,7 +53,6 @@ export const useProducts = () => {
     const result = await dispatch(updateProductThunk({ id, productData }));
     if (updateProductThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to update product';
-      alert(msg);
       throw new Error(msg);
     }
     return result.payload;
@@ -59,7 +62,6 @@ export const useProducts = () => {
     const result = await dispatch(deleteProductThunk(id));
     if (deleteProductThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to delete product';
-      alert(msg);
       throw new Error(msg);
     }
   }, [dispatch]);
@@ -75,7 +77,6 @@ export const useProducts = () => {
     const result = await dispatch(addCategoryThunk(formData));
     if (addCategoryThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to add category';
-      alert(msg);
       throw new Error(msg);
     }
     return result.payload;
@@ -90,7 +91,6 @@ export const useProducts = () => {
     const result = await dispatch(updateCategoryThunk({ id, formData }));
     if (updateCategoryThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to update category';
-      alert(msg);
       throw new Error(msg);
     }
     return result.payload;
@@ -100,7 +100,6 @@ export const useProducts = () => {
     const result = await dispatch(deleteCategoryThunk(slug));
     if (deleteCategoryThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to delete category';
-      alert(msg);
       throw new Error(msg);
     }
   }, [dispatch]);
@@ -111,7 +110,6 @@ export const useProducts = () => {
     const result = await dispatch(addOrderThunk(orderData));
     if (addOrderThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to place order';
-      alert(msg);
       throw new Error(msg);
     }
     return result.payload;
@@ -125,7 +123,6 @@ export const useProducts = () => {
     const result = await dispatch(updateOrderThunk({ orderId, statusData }));
     if (updateOrderThunk.rejected.match(result)) {
       const msg = result.payload || 'Failed to update order';
-      alert(msg);
       throw new Error(msg);
     }
     return result.payload;
@@ -137,6 +134,7 @@ export const useProducts = () => {
     orders,
     fetchProducts,
     fetchCategories,
+    fetchOrders,
     addProduct,
     updateProduct,
     deleteProduct,

@@ -3,7 +3,8 @@ import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { 
   LayoutDashboard, ShoppingCart, ShoppingBag, LogOut, ArrowLeft,
-  ChevronLeft, ChevronRight, Menu, Bell, User, Shield, Sun, Moon, Tag, Sparkles
+  ChevronLeft, ChevronRight, Menu, Bell, User, Shield, Sun, Moon, Tag, Sparkles,
+  FileText, CreditCard, BookOpen
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
 
@@ -42,6 +43,21 @@ const AdminLayout = () => {
       name: 'Orders',
       path: '/admin/orders',
       icon: ShoppingCart,
+    },
+    {
+      name: 'Invoices',
+      path: '/admin/invoices',
+      icon: FileText,
+    },
+    {
+      name: 'Payment History',
+      path: '/admin/payment-history',
+      icon: CreditCard,
+    },
+    {
+      name: 'Ledger',
+      path: '/admin/ledger',
+      icon: BookOpen,
     },
     {
       name: 'Schemes & Offers',

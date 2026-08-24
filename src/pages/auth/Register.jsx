@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ShoppingCart } from 'lucide-react';
@@ -20,7 +20,7 @@ const Register = () => {
     setFormError('');
     setLoading(true);
     try {
-      await register(name, email, password, phone, profilePicture, role);
+      await register({ name, email, password, phone, profilePicture, role });
       navigate('/');
     } catch (err) {
       setFormError(err.message || 'Registration failed.');

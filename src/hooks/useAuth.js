@@ -27,8 +27,12 @@ export const useAuth = () => {
     return result.payload;
   }, [dispatch]);
 
-  const register = useCallback(async (formData) => {
-    const result = await dispatch(registerThunk(formData));
+  const register = useCallback(async (dataOrName, email, password, phone, profilePicture, role) => {
+    let payload = dataOrName;
+    if (typeof dataOrName === 'string') {
+      payload = { name: dataOrName, email, password, phone, profilePicture, role };
+    }
+    const result = await dispatch(registerThunk(payload));
     if (registerThunk.rejected.match(result)) throw new Error(result.payload);
     return result.payload;
   }, [dispatch]);

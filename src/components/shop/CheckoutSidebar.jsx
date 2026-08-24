@@ -3,7 +3,7 @@ import { ShieldCheck, Tag, Sparkles, CheckCircle2, X, AlertCircle, ChevronRight 
 import { useSchemes } from '../../hooks/useSchemes';
 import CouponDrawer from './CouponDrawer';
 
-const CheckoutSidebar = ({ cart = [], cartTotal }) => {
+const CheckoutSidebar = ({ cart = [], cartTotal, loading = false }) => {
   const { schemes, fetchSchemes, appliedScheme, applyLoading, applyScheme, removeAppliedScheme } = useSchemes();
   const [couponCode, setCouponCode] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -202,9 +202,10 @@ const CheckoutSidebar = ({ cart = [], cartTotal }) => {
 
       <button
         type="submit"
-        className="w-full rounded-xl bg-indigo-600 py-3.5 text-base font-semibold text-white hover:bg-indigo-700 shadow-md shadow-indigo-100 dark:shadow-none transition-transform active:scale-95 cursor-pointer"
+        disabled={loading}
+        className="w-full rounded-xl bg-indigo-600 py-3.5 text-base font-semibold text-white hover:bg-indigo-700 shadow-md shadow-indigo-100 dark:shadow-none transition-transform active:scale-95 cursor-pointer disabled:bg-indigo-400 disabled:cursor-not-allowed"
       >
-        Pay ₹{finalTotal.toFixed(2)}
+        {loading ? 'Processing Order...' : `Pay ₹${finalTotal.toFixed(2)}`}
       </button>
 
       <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 py-2 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
@@ -216,4 +217,3 @@ const CheckoutSidebar = ({ cart = [], cartTotal }) => {
 };
 
 export default CheckoutSidebar;
-export { CheckoutSidebar };
