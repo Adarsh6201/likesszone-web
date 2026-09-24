@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { FileText, Download, Search, Calendar, CheckCircle2 } from 'lucide-react';
 import { generateAndDownloadInvoice } from '../../utils/invoiceGenerator';
 
 const InvoiceManager = () => {
-  const { orders } = useProducts();
+  const { orders, fetchOrders } = useProducts();
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredOrders = orders.filter((o) => {

@@ -26,7 +26,7 @@ For testing store browsing, cart checkout, and the administrative dashboard:
 
 | Role | Email | Password | Access Rights |
 | :--- | :--- | :--- | :--- |
-| **🛡️ Administrator** | `admin@likesszon.com` | `admin123` | Full access to Admin Panel, Revenue Stats, Product Catalog Management, Order Tracking, Scheme Management. |
+| **🛡️ Administrator** | `admin@likesszon.com` | `Admin@123` | Full access to Admin Panel, Revenue Stats, Product Catalog Management, Order Tracking, Scheme Management. |
 | **👤 Customer** | `user@likesszon.com` | `user123` | Customer Storefront, Cart, Checkout, Order History, Settings & Profile management. |
 | **👀 Guest User** | *None* | *None* | Browse catalog, search products, add items to cart (prompted to log in at checkout). |
 

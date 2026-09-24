@@ -11,6 +11,7 @@ import {
 import { setDarkMode } from '../store/slices/uiSlice';
 import { clearOrders } from '../store/slices/orderSlice';
 import { guestClearCart } from '../store/slices/cartSlice';
+import { request } from '../services/api';
 
 /**
  * Drop-in replacement for the old useAuth() context hook.
@@ -28,10 +29,9 @@ export const useAuth = () => {
   }, [dispatch]);
 
   const register = useCallback(async (dataOrName, email, password, phone, profilePicture, role) => {
-    let payload = dataOrName;
-    if (typeof dataOrName === 'string') {
-      payload = { name: dataOrName, email, password, phone, profilePicture, role };
-    }
+    const payload = typeof dataOrName === 'object' && dataOrName !== null
+      ? dataOrName
+      : { name: dataOrName, email, password, phone, profilePicture, role };
     const result = await dispatch(registerThunk(payload));
     if (registerThunk.rejected.match(result)) throw new Error(result.payload);
     return result.payload;
@@ -49,9 +49,11 @@ export const useAuth = () => {
     return result.payload;
   }, [dispatch]);
 
-  // changePassword is a stub (not yet implemented in the backend)
-  const changePassword = useCallback(async () => {
-    return new Promise((resolve) => setTimeout(resolve, 400));
+  const changePassword = useCallback(async (oldPassword, newPassword) => {
+    return await request('/auth/change-password', {
+      method: 'POST',
+      body: { oldPassword, newPassword },
+    });
   }, []);
 
   return {

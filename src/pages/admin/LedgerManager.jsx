@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { BookOpen, TrendingUp, ArrowDownRight, ArrowUpRight, DollarSign, Search, ShieldCheck } from 'lucide-react';
 
 const LedgerManager = () => {
-  const { orders } = useProducts();
+  const { orders, fetchOrders } = useProducts();
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
   const [searchTerm, setSearchTerm] = useState('');
 
   const totalSalesRevenue = orders.reduce((acc, o) => acc + (o.total || 0), 0);
@@ -20,7 +25,7 @@ const LedgerManager = () => {
     runningBalance += isPaid ? amount : 0;
 
     return {
-      voucherNo: `VCH-${order.id.replace('ORD-', '')}`,
+      voucherNo: `VCH-${String(order.id || idx + 1).replace('ORD-', '')}`,
       orderId: order.id,
       date: new Date(order.date || Date.now()).toLocaleDateString('en-IN', {
         day: '2-digit',

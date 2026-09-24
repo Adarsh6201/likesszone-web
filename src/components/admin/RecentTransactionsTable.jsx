@@ -29,43 +29,63 @@ const RecentTransactionsTable = ({ orders = [], onManageAll }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-            {orders.slice(0, 5).map((order) => (
-              <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20">
-                <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{order.id}</td>
-                <td className="py-3.5 px-4">
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">{order.customerName}</p>
-                    <p className="text-xs text-slate-500">{order.customerEmail}</p>
-                  </div>
-                </td>
-                <td className="py-3.5 px-4 text-slate-500">
-                  {new Date(order.date).toLocaleDateString()}
-                </td>
-                <td className="py-3.5 px-4 text-right font-semibold text-slate-800 dark:text-slate-100">
-                  ₹{order.total.toFixed(2)}
-                </td>
-                <td className="py-3.5 px-4 text-center">
-                  <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
-                    order.status === 'Delivered' 
-                      ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                      : order.status === 'Processing' || order.status === 'Shipped'
-                      ? 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400'
-                      : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'
-                  }`}>
-                    {order.status}
-                  </span>
-                </td>
-                <td className="py-3.5 px-4 text-center">
-                  <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
-                    order.paymentStatus === 'Paid'
-                      ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                      : 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400'
-                  }`}>
-                    {order.paymentStatus}
-                  </span>
+            {orders.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="py-8 text-center text-xs text-slate-400 italic">
+                  No recent orders registered in the system yet.
                 </td>
               </tr>
-            ))}
+            ) : (
+              orders.slice(0, 5).map((order) => {
+                const orderDate = order.date || order.createdAt;
+                const formattedDate = orderDate
+                  ? new Date(orderDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })
+                  : 'Recent';
+                const totalAmount = Number(order.total || 0).toFixed(2);
+                const custName = order.customerName || order.user?.name || 'Customer';
+                const custEmail = order.customerEmail || order.user?.email || 'N/A';
+
+                return (
+                  <tr key={order.id || order.rawId} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
+                      {order.id ? (String(order.id).startsWith('ORD-') ? order.id : `ORD-${order.id}`) : `ORD-${order.rawId}`}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">{custName}</p>
+                        <p className="text-xs text-slate-500">{custEmail}</p>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-500 text-xs">
+                      {formattedDate}
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-semibold text-slate-800 dark:text-slate-100">
+                      ₹{totalAmount}
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
+                        order.status === 'Delivered' 
+                          ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                          : order.status === 'Processing' || order.status === 'Shipped'
+                          ? 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400'
+                          : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'
+                      }`}>
+                        {order.status || 'Pending'}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
+                        order.paymentStatus === 'Paid'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                          : 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400'
+                      }`}>
+                        {order.paymentStatus || 'Pending'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

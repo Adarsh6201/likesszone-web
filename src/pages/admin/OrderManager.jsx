@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import OrdersTable from '../../components/admin/OrdersTable';
 import { Search, Filter, RotateCcw, ShoppingBag, CreditCard, ArrowUpDown } from 'lucide-react';
 
 const OrderManager = () => {
-  const { orders, updateOrder } = useProducts();
+  const { orders, updateOrder, fetchOrders } = useProducts();
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -75,6 +79,14 @@ const OrderManager = () => {
           <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
             Showing <span className="text-indigo-600 dark:text-indigo-400 font-black">{filteredOrders.length}</span> of {orders.length} orders
           </span>
+          <button
+            onClick={() => fetchOrders()}
+            title="Refresh orders list from server"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800/50 transition-all cursor-pointer"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Refresh</span>
+          </button>
         </div>
       </div>
 

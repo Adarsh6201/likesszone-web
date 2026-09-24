@@ -1,16 +1,21 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { Plus } from 'lucide-react';
 import CategoryCreatorForm from '../../components/admin/CategoryCreatorForm';
 import CategoryCard from '../../components/admin/CategoryCard';
 
 const ProductTypeManager = () => {
-  const { categories, products, addCategory, deleteCategory, updateCategory } = useProducts();
+  const { categories, products, addCategory, deleteCategory, updateCategory, fetchCategories, fetchProducts } = useProducts();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
 
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts();
+  }, [fetchCategories, fetchProducts]);
+
   const getProductCount = (categorySlug) => {
-    return products.filter(p => p.category === categorySlug).length;
+    return products.filter(p => p.category === categorySlug || p.categorySlug === categorySlug).length;
   };
 
   const handleEditClick = (category) => {

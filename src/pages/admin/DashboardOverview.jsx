@@ -71,7 +71,7 @@ const DashboardOverview = () => {
               <h2 className="text-base font-bold text-slate-900 dark:text-white">Categories Overview</h2>
             </div>
             <button
-              onClick={() => navigate('/admin/categories')}
+              onClick={() => navigate('/admin/product-types')}
               className="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center gap-1"
             >
               Manage <ArrowRight className="h-3 w-3" />

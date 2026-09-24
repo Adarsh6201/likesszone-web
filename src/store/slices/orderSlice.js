@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getOrdersAPI, createOrderAPI, updateOrderAPI } from '../../services/orderService';
+import { getOrdersAPI, getOrderByIdAPI, createOrderAPI, updateOrderAPI } from '../../services/orderService';
 
 // ─── Thunks ─────────────────────────────────────────────────────────────────
 
@@ -10,6 +10,17 @@ export const fetchOrdersThunk = createAsyncThunk(
       const res = await getOrdersAPI();
       if (res?.status === 'success') return res.data;
       return rejectWithValue('Failed to fetch orders');
+    } catch (err) { return rejectWithValue(err.message); }
+  }
+);
+
+export const fetchOrderByIdThunk = createAsyncThunk(
+  'orders/fetchById',
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const res = await getOrderByIdAPI(orderId);
+      if (res?.status === 'success') return res.data;
+      return rejectWithValue('Failed to fetch order');
     } catch (err) { return rejectWithValue(err.message); }
   }
 );
@@ -66,7 +77,18 @@ const orderSlice = createSlice({
         const idx = state.orders.findIndex((o) => o.id === action.payload.id);
         if (idx !== -1) state.orders[idx] = action.payload;
       })
-      .addCase(updateOrderThunk.rejected, (state, action) => { state.error = action.payload; });
+      .addCase(updateOrderThunk.rejected, (state, action) => { state.error = action.payload; })
+      .addCase(fetchOrderByIdThunk.fulfilled, (state, action) => {
+        if (!action.payload) return;
+        const idx = state.orders.findIndex(
+          (o) => String(o.id).toLowerCase() === String(action.payload.id).toLowerCase()
+        );
+        if (idx !== -1) {
+          state.orders[idx] = action.payload;
+        } else {
+          state.orders.unshift(action.payload);
+        }
+      });
   },
 });
 

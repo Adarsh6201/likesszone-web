@@ -12,6 +12,7 @@ import {
 } from '../store/slices/productSlice';
 import {
   fetchOrdersThunk,
+  fetchOrderByIdThunk,
   addOrderThunk,
   updateOrderThunk,
 } from '../store/slices/orderSlice';
@@ -128,6 +129,15 @@ export const useProducts = () => {
     return result.payload;
   }, [dispatch]);
 
+  const fetchOrderById = useCallback(async (id) => {
+    const result = await dispatch(fetchOrderByIdThunk(id));
+    if (fetchOrderByIdThunk.rejected.match(result)) {
+      const msg = result.payload || 'Failed to fetch order';
+      throw new Error(msg);
+    }
+    return result.payload;
+  }, [dispatch]);
+
   return {
     products,
     categories,
@@ -135,6 +145,7 @@ export const useProducts = () => {
     fetchProducts,
     fetchCategories,
     fetchOrders,
+    fetchOrderById,
     addProduct,
     updateProduct,
     deleteProduct,

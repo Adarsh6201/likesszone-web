@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { CreditCard, Search, ShieldCheck, ArrowUpRight, DollarSign, Calendar } from 'lucide-react';
 
 const PaymentHistoryManager = () => {
-  const { orders } = useProducts();
+  const { orders, fetchOrders } = useProducts();
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
   const [searchTerm, setSearchTerm] = useState('');
 
   const totalCollected = orders.reduce((acc, o) => acc + (o.total || 0), 0);

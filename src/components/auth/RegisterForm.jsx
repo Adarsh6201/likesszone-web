@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, Eye, EyeOff, Phone, Camera } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Phone, Camera, Check, X, ShieldAlert } from 'lucide-react';
 
 const RegisterForm = ({ onSubmit, loading }) => {
   const [name, setName] = useState('');
@@ -9,6 +9,15 @@ const RegisterForm = ({ onSubmit, loading }) => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePreview, setProfilePreview] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [validationError, setValidationError] = useState('');
+
+  // Password validation checks
+  const hasMinLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(password);
+  const isPasswordValid = hasMinLength && hasUpper && hasLower && hasNumber && hasSpecial;
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -20,6 +29,11 @@ const RegisterForm = ({ onSubmit, loading }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isPasswordValid) {
+      setValidationError('Password must meet all security requirements listed below.');
+      return;
+    }
+    setValidationError('');
     onSubmit(name, email, password, phone, profilePicture, 'user');
   };
 
@@ -117,12 +131,48 @@ const RegisterForm = ({ onSubmit, loading }) => {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
+
+        {/* Password Strength Checklist */}
+        <div className="pt-1 pb-1 space-y-1 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 text-[11px]">
+          <span className="font-semibold text-slate-600 dark:text-slate-300 block mb-1">
+            Password Requirements:
+          </span>
+          <div className="grid grid-cols-2 gap-1 text-[10.5px]">
+            <span className={`flex items-center gap-1.5 ${hasMinLength ? 'text-emerald-600 font-medium' : 'text-slate-400'}`}>
+              {hasMinLength ? <Check className="h-3 w-3" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1 mr-0.5" />}
+              At least 8 characters
+            </span>
+            <span className={`flex items-center gap-1.5 ${hasUpper ? 'text-emerald-600 font-medium' : 'text-slate-400'}`}>
+              {hasUpper ? <Check className="h-3 w-3" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1 mr-0.5" />}
+              1 uppercase letter (A-Z)
+            </span>
+            <span className={`flex items-center gap-1.5 ${hasLower ? 'text-emerald-600 font-medium' : 'text-slate-400'}`}>
+              {hasLower ? <Check className="h-3 w-3" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1 mr-0.5" />}
+              1 lowercase letter (a-z)
+            </span>
+            <span className={`flex items-center gap-1.5 ${hasNumber ? 'text-emerald-600 font-medium' : 'text-slate-400'}`}>
+              {hasNumber ? <Check className="h-3 w-3" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1 mr-0.5" />}
+              1 number (0-9)
+            </span>
+            <span className={`flex items-center gap-1.5 col-span-2 ${hasSpecial ? 'text-emerald-600 font-medium' : 'text-slate-400'}`}>
+              {hasSpecial ? <Check className="h-3 w-3" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1 mr-0.5" />}
+              1 special character (!@#$%^&* etc.)
+            </span>
+          </div>
+        </div>
+
+        {validationError && (
+          <div className="flex items-center gap-1.5 text-xs text-red-600 bg-red-50 dark:bg-red-950/30 p-2 rounded-lg border border-red-100 dark:border-red-900/50">
+            <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
+            <span>{validationError}</span>
+          </div>
+        )}
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white hover:bg-indigo-700 shadow-md shadow-indigo-100 dark:shadow-none transition-all active:scale-95 disabled:bg-indigo-400"
+        className="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white hover:bg-indigo-700 shadow-md shadow-indigo-100 dark:shadow-none transition-all active:scale-95 disabled:bg-indigo-400 cursor-pointer"
       >
         {loading ? 'Creating Account...' : 'Sign Up'}
       </button>

@@ -186,11 +186,20 @@ const CheckoutForm = ({
           </h2>
 
           {/* Segmented Selectors */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              { id: 'razorpay', label: 'Razorpay Pay', icon: CreditCard },
-              { id: 'card', label: 'Card Details', icon: CreditCard },
-              { id: 'upi', label: 'UPI Pay', icon: QrCode }
+              { 
+                id: 'razorpay', 
+                label: 'Online Payment (Razorpay)', 
+                sub: 'UPI, Credit/Debit Cards, NetBanking, Wallets',
+                icon: CreditCard 
+              },
+              { 
+                id: 'cod', 
+                label: 'Cash on Delivery (COD)', 
+                sub: 'Pay with cash upon doorstep delivery',
+                icon: QrCode 
+              }
             ].map((opt) => {
               const Icon = opt.icon;
               const isSelected = method === opt.id;
@@ -199,14 +208,19 @@ const CheckoutForm = ({
                   key={opt.id}
                   type="button"
                   onClick={() => selectMethod(opt.id)}
-                  className={`flex flex-col items-center gap-2 rounded-2xl p-3 text-xs font-bold border transition-all cursor-pointer ${
+                  className={`flex items-start gap-3 rounded-2xl p-4 text-left border transition-all cursor-pointer ${
                     isSelected 
-                      ? 'border-indigo-500 bg-indigo-50/40 text-indigo-700 dark:text-indigo-300 dark:border-indigo-500/50 ring-2 ring-indigo-500/20' 
-                      : 'border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100/70 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-400 dark:hover:bg-slate-800'
+                      ? 'border-indigo-500 bg-indigo-50/40 text-indigo-700 dark:text-indigo-300 dark:border-indigo-500/50 ring-2 ring-indigo-500/20 shadow-sm' 
+                      : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100/70 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-400 dark:hover:bg-slate-800'
                   }`}
                 >
-                  <Icon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                  {opt.label}
+                  <div className={`p-2 rounded-xl shrink-0 ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold block">{opt.label}</span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5">{opt.sub}</span>
+                  </div>
                 </button>
               );
             })}
@@ -218,7 +232,7 @@ const CheckoutForm = ({
               <div className="rounded-2xl border border-indigo-200 dark:border-indigo-800/50 bg-indigo-50/50 dark:bg-indigo-950/30 p-4 text-xs space-y-2">
                 <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-bold">
                   <Shield className="h-4 w-4 text-indigo-600" />
-                  <span>Official Razorpay Payment Gateway</span>
+                  <span>Official 256-Bit Encrypted Razorpay Gateway</span>
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
                   Clicking "Place Order" will launch the official Razorpay Checkout popup modal where you can pay securely via <strong>UPI (PhonePe, GPay, Paytm)</strong>, <strong>Debit/Credit Cards</strong>, <strong>Net Banking</strong>, or <strong>Wallets</strong>.
@@ -227,79 +241,17 @@ const CheckoutForm = ({
             </div>
           )}
 
-          {/* Tab Content 1: Card Details */}
-          {method === 'card' && (
-            <div className="space-y-4 animate-fadeIn">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-500">Cardholder Name</label>
-                <input
-                  type="text"
-                  name="cardName"
-                  required={method === 'card'}
-                  value={formData.cardName || ''}
-                  onChange={onChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-500">Card Number</label>
-                <input
-                  type="text"
-                  name="cardNumber"
-                  required={method === 'card'}
-                  placeholder="xxxx xxxx xxxx xxxx"
-                  value={formData.cardNumber || ''}
-                  onChange={onChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-500">Expiration (MM/YY)</label>
-                  <input
-                    type="text"
-                    name="expiry"
-                    required={method === 'card'}
-                    placeholder="12/28"
-                    value={formData.expiry || ''}
-                    onChange={onChange}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900"
-                  />
+          {/* Tab Content 1: COD Info Banner */}
+          {method === 'cod' && (
+            <div className="space-y-3 animate-fadeIn">
+              <div className="rounded-2xl border border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-950/30 p-4 text-xs space-y-2">
+                <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold">
+                  <Check className="h-4 w-4 text-amber-600" />
+                  <span>Cash on Delivery Verified</span>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-500">CVV</label>
-                  <input
-                    type="password"
-                    name="cvv"
-                    required={method === 'card'}
-                    maxLength="3"
-                    placeholder="***"
-                    value={formData.cvv || ''}
-                    onChange={onChange}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab Content 2: UPI ID */}
-          {method === 'upi' && (
-            <div className="space-y-4 animate-fadeIn">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-500">UPI Address (VPA)</label>
-                <input
-                  type="text"
-                  name="upiId"
-                  required={method === 'upi'}
-                  placeholder="e.g. username@okhdfcbank"
-                  value={formData.upiId || ''}
-                  onChange={onChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-850 dark:text-white dark:focus:bg-slate-900"
-                />
-              </div>
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 p-4 text-[11px] text-slate-400 leading-relaxed">
-                Enter your UPI ID (Virtual Payment Address). You will receive a mobile notification or verification request in your default UPI application (PhonePe, GPay, Paytm) to finalize payment.
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                  You can pay with cash or UPI scanner directly to the courier agent when your package is delivered to your shipping address.
+                </p>
               </div>
             </div>
           )}

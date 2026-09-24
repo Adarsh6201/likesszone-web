@@ -10,6 +10,7 @@ import CheckoutSidebar from '../../components/shop/CheckoutSidebar';
 import AddressSelectModal from '../../components/shop/AddressSelectModal';
 import AddAddressBottomModal from '../../components/shop/AddAddressBottomModal';
 import { openRazorpayCheckout } from '../../utils/razorpay';
+import { BASE_URL } from '../../services/api';
 
 const Checkout = () => {
   const { cart, cartTotal, clearCart } = useCart();
@@ -133,7 +134,7 @@ const Checkout = () => {
     });
   };
 
-  const finalizeOrder = async (payMethodLabel = 'Card', paymentId = null) => {
+  const finalizeOrder = async (payMethodLabel = 'Razorpay Online', paymentId = null, paymentStatus = 'Paid') => {
     const customerName = `${formData.firstName} ${formData.lastName}`.trim() || user?.name || 'Customer';
     const customerEmail = formData.email || user?.email || 'customer@likesszon.com';
 
@@ -149,7 +150,7 @@ const Checkout = () => {
       })),
       total: cartTotal,
       paymentMethod: payMethodLabel,
-      paymentStatus: 'Paid',
+      paymentStatus: paymentStatus,
       shippingDetails: {
         address: formData.address,
         city: formData.city,
@@ -180,14 +181,17 @@ const Checkout = () => {
     const phone = selectedAddress?.phone || '+91 9304264241';
 
     try {
-      if (formData.paymentMethod === 'razorpay' || formData.paymentMethod === 'upi') {
-        // Attempt to create backend Razorpay order
+      if (formData.paymentMethod === 'cod') {
+        // Direct Cash on Delivery order with 'Pending' payment status
+        await finalizeOrder('Cash on Delivery', null, 'Pending');
+        setLoading(false);
+      } else {
+        // Official Online Razorpay Checkout
         let razorpayOrderId = null;
         let keyId = null;
 
         try {
-          const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-          const response = await fetch(`${apiBaseUrl}/payments/create-razorpay-order`, {
+          const response = await fetch(`${BASE_URL}/payments/create-razorpay-order`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: cartTotal, receiptId: `rcpt_${Date.now()}` }),
@@ -214,9 +218,8 @@ const Checkout = () => {
           phone,
           onSuccess: async (payResponse) => {
             try {
-              // Attempt to verify payment via backend API
-              const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-              await fetch(`${apiBaseUrl}/payments/verify-razorpay-payment`, {
+              // Verify payment cryptographically via backend API
+              const verifyRes = await fetch(`${BASE_URL}/payments/verify-razorpay-payment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -240,22 +243,49 @@ const Checkout = () => {
                   }
                 }),
               });
-            } catch (verifyErr) {
-              console.warn("Verification API offline, finalizing order locally:", verifyErr);
-            }
 
-            await finalizeOrder('Razorpay / UPI Online', payResponse.razorpayPaymentId);
-            setLoading(false);
+              const resData = await verifyRes.json();
+              if (verifyRes.ok && resData.success) {
+                const verifiedOrder = resData.data?.order;
+                const realId = verifiedOrder?.id ? `ORD-${verifiedOrder.id}` : `ORD-${Date.now()}`;
+
+                setLastOrder({
+                  customerName,
+                  customerEmail,
+                  items: cart,
+                  total: cartTotal,
+                  paymentMethod: 'UPI / Online Razorpay',
+                  paymentStatus: 'Paid',
+                  shippingDetails: {
+                    address: formData.address,
+                    city: formData.city,
+                    zip: formData.zip
+                  },
+                  id: realId,
+                  date: new Date().toISOString()
+                });
+                setPlacedOrderId(realId);
+                setIsSubmitted(true);
+                clearCart();
+                setLoading(false);
+                return;
+              } else {
+                setErrorMsg(resData.error || 'Payment verification failed on server.');
+                setLoading(false);
+                return;
+              }
+            } catch (verifyErr) {
+              console.error("Verification API error:", verifyErr);
+              // Fallback finalize order if backend verification had network error
+              await finalizeOrder('Razorpay Online', payResponse.razorpayPaymentId, 'Pending');
+              setLoading(false);
+            }
           },
           onError: (errMessage) => {
             setErrorMsg(errMessage || 'Razorpay checkout cancelled or failed.');
             setLoading(false);
           }
         });
-      } else {
-        // Standard Direct Card Checkout
-        await finalizeOrder('Credit/Debit Card');
-        setLoading(false);
       }
     } catch (err) {
       console.error("Order submission error:", err);
@@ -263,6 +293,26 @@ const Checkout = () => {
       setLoading(false);
     }
   };
+
+  if (!isSubmitted && (!cart || cart.length === 0)) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6">
+        <div className="h-16 w-16 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-400 mx-auto">
+          <ArrowLeft className="h-8 w-8" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Your Cart is Empty</h2>
+          <p className="text-slate-500 text-sm">Add some tech components or accessories to your cart before proceeding to checkout.</p>
+        </div>
+        <button
+          onClick={() => navigate('/shop')}
+          className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 cursor-pointer shadow-md"
+        >
+          Explore Store Catalog
+        </button>
+      </div>
+    );
+  }
 
   if (isSubmitted) {
     return (

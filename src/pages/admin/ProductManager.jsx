@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
 import { Plus } from 'lucide-react';
 import ProductCatalogTable from '../../components/admin/ProductCatalogTable';
 
 const ProductManager = () => {
-  const { products: items, deleteProduct, updateProduct } = useProducts();
+  const { products: items, deleteProduct, updateProduct, fetchProducts } = useProducts();
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleToggleFeatured = async (product) => {
     try {

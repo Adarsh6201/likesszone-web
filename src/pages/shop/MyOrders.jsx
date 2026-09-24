@@ -1,30 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
-import { Package, ChevronRight } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { Package, ChevronRight, Loader2 } from 'lucide-react';
 import OrderSearchSidebar from '../../components/shop/OrderSearchSidebar';
 import OrderTrackingPanel from '../../components/shop/OrderTrackingPanel';
 import OrderItemsInvoice from '../../components/shop/OrderItemsInvoice';
 
 const MyOrders = () => {
-  const { orders, products } = useProducts();
+  const { orders, products, fetchOrders, fetchOrderById } = useProducts();
+  const { isAuthenticated } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const orderIdQuery = searchParams.get('id') || '';
 
   const [searchId, setSearchId] = useState(orderIdQuery);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isLoadingOrder, setIsLoadingOrder] = useState(false);
 
-  // Pre-select order if query param is set
+  // Fetch orders list if authenticated
   useEffect(() => {
-    if (orderIdQuery) {
-      const match = orders.find(
-        (o) => o.id.toLowerCase() === orderIdQuery.trim().toLowerCase()
-      );
-      setSelectedOrder(match || null);
-    } else {
-      setSelectedOrder(null);
+    if (isAuthenticated) {
+      fetchOrders();
     }
-  }, [orderIdQuery, orders]);
+  }, [isAuthenticated, fetchOrders]);
+
+  // Pre-select order if query param is set, or fetch from backend API
+  useEffect(() => {
+    if (!orderIdQuery) {
+      setSelectedOrder(null);
+      setIsLoadingOrder(false);
+      return;
+    }
+
+    const trimmedQuery = orderIdQuery.trim().toLowerCase();
+    const match = orders.find(
+      (o) => String(o.id).toLowerCase() === trimmedQuery
+    );
+
+    if (match) {
+      setSelectedOrder(match);
+      setIsLoadingOrder(false);
+    } else {
+      // Not in local store, fetch directly from backend API
+      setIsLoadingOrder(true);
+      fetchOrderById(orderIdQuery.trim())
+        .then((order) => {
+          setSelectedOrder(order);
+        })
+        .catch(() => {
+          setSelectedOrder(null);
+        })
+        .finally(() => {
+          setIsLoadingOrder(false);
+        });
+    }
+  }, [orderIdQuery, orders, fetchOrderById]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -62,7 +92,13 @@ const MyOrders = () => {
         {/* Right Column: Tracking Progress Details */}
         <div className="lg:col-span-8">
 
-          {selectedOrder ? (
+          {isLoadingOrder ? (
+            <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center h-full min-h-[400px]">
+              <Loader2 className="h-10 w-10 text-indigo-600 animate-spin mb-4" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Fetching Order Details</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-xs">Connecting to store logistics network for real-time tracking logs...</p>
+            </div>
+          ) : selectedOrder ? (
             <div className="space-y-6">
               <OrderTrackingPanel
                 order={selectedOrder}
