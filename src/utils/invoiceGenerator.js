@@ -1,5 +1,30 @@
 import LogoImage from '../assets/logo.png';
 
+const escapeHtml = (str) => {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
+const sanitizeImgUrl = (url) => {
+  if (!url) return '';
+  const trimmed = String(url).trim();
+  if (
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('data:image/') ||
+    trimmed.startsWith('/uploads/') ||
+    trimmed.startsWith('blob:')
+  ) {
+    return trimmed;
+  }
+  return '';
+};
+
 /**
  * Formats and triggers print/download of an official Likesszon Tax Invoice
  * compact 1-page layout with brand Maroon (#8a0025) styling & contact info.
@@ -7,20 +32,23 @@ import LogoImage from '../assets/logo.png';
 export const generateAndDownloadInvoice = (order) => {
   if (!order) return;
 
-  const invoiceNo = `INV-${order.id}`;
-  const orderDate = new Date(order.date || Date.now()).toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+  const invoiceNo = escapeHtml(`INV-${order.id}`);
+  const orderDate = escapeHtml(
+    new Date(order.date || Date.now()).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  );
 
-  const customerName = order.customerName || order.name || 'Valued Customer';
-  const customerEmail = order.customerEmail || order.email || 'N/A';
-  const address = order.shippingDetails?.address || order.address || 'Address not specified';
-  const city = order.shippingDetails?.city || order.city || '';
-  const zip = order.shippingDetails?.zip || order.zip || '';
-  const paymentMethod = (order.paymentMethod || 'Card').toUpperCase();
-  const paymentStatus = (order.paymentStatus || 'PAID').toUpperCase();
+  const customerName = escapeHtml(order.customerName || order.name || 'Valued Customer');
+  const customerEmail = escapeHtml(order.customerEmail || order.email || 'N/A');
+  const address = escapeHtml(order.shippingDetails?.address || order.address || 'Address not specified');
+  const city = escapeHtml(order.shippingDetails?.city || order.city || '');
+  const zip = escapeHtml(order.shippingDetails?.zip || order.zip || '');
+  const paymentMethod = escapeHtml((order.paymentMethod || 'Card').toUpperCase());
+  const paymentStatus = escapeHtml((order.paymentStatus || 'PAID').toUpperCase());
+  const orderId = escapeHtml(String(order.id || ''));
   const items = order.items || [];
 
   const subtotal = items.reduce((acc, item) => acc + ((item.price || 0) * (item.quantity || 1)), 0) || order.total || 0;
@@ -391,7 +419,7 @@ export const generateAndDownloadInvoice = (order) => {
             <div class="info-card">
               <div class="info-title">Payment & Order Summary</div>
               <div class="address-text">
-                <strong>Order ID:</strong> ${order.id}<br />
+                <strong>Order ID:</strong> ${orderId}<br />
                 <strong>Payment Method:</strong> ${paymentMethod}<br />
                 <strong>Delivery Speed:</strong> Free Express Shipping (3-5 Days)<br />
                 <span class="status-badge">✓ ${paymentStatus}</span>
@@ -414,7 +442,9 @@ export const generateAndDownloadInvoice = (order) => {
               </thead>
               <tbody>
                 ${items.map((item, idx) => {
-                  const itemThumb = item.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                  const rawThumb = item.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                  const itemThumb = sanitizeImgUrl(rawThumb) || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                  const itemName = escapeHtml(item.name || 'Product');
                   const itemPrice = item.price || 0;
                   const itemQty = item.quantity || 1;
                   const itemTotal = itemPrice * itemQty;
@@ -424,7 +454,7 @@ export const generateAndDownloadInvoice = (order) => {
                       <td>
                         <div class="product-cell">
                           <img src="${itemThumb}" alt="" class="product-img" />
-                          <span class="product-title">${item.name}</span>
+                          <span class="product-title">${itemName}</span>
                         </div>
                       </td>
                       <td class="text-left num-col">₹${itemPrice.toFixed(2)}</td>
