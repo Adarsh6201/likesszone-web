@@ -1,14 +1,4 @@
-const getBaseUrl = () => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
-  if (envUrl && envUrl !== 'http://localhost:5000/api' && !envUrl.startsWith('/')) {
-    return envUrl;
-  }
-  // When running Vite dev server or accessing from other LAN devices (e.g., 192.168.1.41:5173),
-  // using '/api' routes requests through the Vite proxy back to the backend.
-  return '/api';
-};
-
-export const BASE_URL = getBaseUrl();
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 /**
  * Resolves an image URL or upload path against the backend server URL
@@ -21,15 +11,7 @@ export const getImageUrl = (imagePath) => {
     return imagePath;
   }
   const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-  if (BASE_URL.startsWith('http://') || BASE_URL.startsWith('https://')) {
-    try {
-      const backendOrigin = new URL(BASE_URL).origin;
-      return `${backendOrigin}${cleanPath}`;
-    } catch {
-      return cleanPath;
-    }
-  }
-  return cleanPath;
+  return `http://localhost:5000${cleanPath}`;
 };
 
 
