@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Calendar, MapPin, Download, Package, CreditCard, ShieldCheck } from 'lucide-react';
 import { generateAndDownloadInvoice } from '../../utils/invoiceGenerator';
+import { getImageUrl } from '../../services/api';
 
 const AdminOrderDetailModal = ({ isOpen, onClose, order }) => {
   if (!isOpen || !order) return null;
@@ -84,7 +85,7 @@ const AdminOrderDetailModal = ({ isOpen, onClose, order }) => {
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ordered Items ({items.length})</h4>
             <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
               {items.map((item, idx) => {
-                const itemThumb = item.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                const itemThumb = getImageUrl(item.image) || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
                 return (
                   <div key={idx} className="flex justify-between items-center p-3.5 bg-white dark:bg-slate-900">
                     <div className="flex items-center gap-3">

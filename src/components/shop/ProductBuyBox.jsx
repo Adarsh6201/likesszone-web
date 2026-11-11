@@ -17,7 +17,7 @@ const ProductBuyBox = ({ product, quantity, onQuantityChange, onAddToCart, onBuy
         {/* Price indicator */}
         <div className="space-y-1">
           <div className="text-2xl font-black text-slate-950 dark:text-white">
-            ₹{product.price.toFixed(2)}
+            ₹{Number(product.price || 0).toFixed(2)}
           </div>
           <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
             Free delivery available.

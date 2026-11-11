@@ -1,6 +1,7 @@
 import React from 'react';
 import { Package, Download } from 'lucide-react';
 import { generateAndDownloadInvoice } from '../../utils/invoiceGenerator';
+import { getImageUrl } from '../../services/api';
 
 const OrderItemsInvoice = ({ items = [], products = [], order = null }) => {
   return (
@@ -25,7 +26,7 @@ const OrderItemsInvoice = ({ items = [], products = [], order = null }) => {
       <div className="divide-y divide-slate-100 dark:divide-slate-800/80 space-y-3">
         {items.map((item, idx) => {
           const matchedProduct = products.find(p => p.id === item.productId || p.id === item.id);
-          const thumb = item.image || matchedProduct?.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+          const thumb = getImageUrl(item.image || matchedProduct?.image) || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
           
           return (
             <div key={idx} className="flex justify-between items-center py-3">
@@ -35,11 +36,11 @@ const OrderItemsInvoice = ({ items = [], products = [], order = null }) => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">{item.name}</p>
-                  <p className="text-[10px] text-slate-400">Qty: {item.quantity} x ₹{item.price.toFixed(2)}</p>
+                  <p className="text-[10px] text-slate-400">Qty: {item.quantity || 1} x ₹{Number(item.price || 0).toFixed(2)}</p>
                 </div>
               </div>
               <span className="text-xs font-extrabold text-slate-900 dark:text-white">
-                ₹{(item.price * item.quantity).toFixed(2)}
+                ₹{(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}
               </span>
             </div>
           );

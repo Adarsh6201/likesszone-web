@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
 
-const AdminLayout = () => {
+const AdminLayout = ({ children }) => {
   const { user, logout, isDarkMode, setIsDarkMode } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -295,7 +295,7 @@ const AdminLayout = () => {
         {/* --- Main Dashboard Canvas Outlet --- */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
-            <Outlet />
+            {children || <Outlet />}
           </div>
         </main>
 

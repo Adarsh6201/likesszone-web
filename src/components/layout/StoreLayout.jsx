@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
+import { useProducts } from '../../hooks/useProducts';
+import { getImageUrl } from '../../services/api';
 import { 
   ShoppingBag, Search, User, X, Plus, Minus, Trash2, 
   ArrowRight, Shield, LogOut, Sun, Moon, ShoppingCart, Menu, Settings,
@@ -9,7 +11,7 @@ import {
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
 
-const StoreLayout = () => {
+const StoreLayout = ({ children }) => {
   const { user, logout, isAuthenticated, isAdmin, isDarkMode, setIsDarkMode } = useAuth();
   const { 
     cart, isCartOpen, closeCart, toggleCart, 
@@ -20,8 +22,16 @@ const StoreLayout = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
+  const { fetchProducts, fetchCategories } = useProducts();
+
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Load products and categories globally for customer storefront
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
 
   // Close drawers and dropdowns on page route change
   useEffect(() => {
@@ -226,7 +236,7 @@ const StoreLayout = () => {
 
       {/* --- Main Storefront Canvas --- */}
       <main className="flex-grow">
-        <Outlet />
+        {children || <Outlet />}
       </main>
 
       {/* --- Shopping Cart Drawer Slider --- */}
@@ -277,16 +287,20 @@ const StoreLayout = () => {
                     {cart.map((item) => (
                       <div key={item.id} className="flex py-2 border-b border-slate-100 dark:border-slate-800/50 pb-4">
                         <img 
-                          src={item.image} 
+                          src={getImageUrl(item.image)} 
                           alt={item.name} 
-                          className="h-20 w-20 rounded-lg object-cover border border-slate-200 dark:border-slate-800" 
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                          }}
+                          className="h-20 w-20 rounded-lg object-contain p-1 border border-slate-200 dark:border-slate-800" 
                         />
                         <div className="ml-4 flex-1 flex flex-col justify-between">
                           <div>
                             <div className="flex justify-between text-sm font-medium">
                               <h3 className="text-slate-900 dark:text-white truncate max-w-[150px]">{item.name}</h3>
                               <p className="ml-2 text-slate-900 dark:text-indigo-400 font-semibold">
-                                ₹{(item.price * item.quantity).toFixed(2)}
+                                ₹{(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}
                               </p>
                             </div>
                           </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Trash2, Edit } from 'lucide-react';
+import { getImageUrl } from '../../services/api';
 
 const CategoryCard = ({ cat, productCount, onDelete, onEdit }) => {
   return (
@@ -16,11 +17,15 @@ const CategoryCard = ({ cat, productCount, onDelete, onEdit }) => {
       </div>
 
       {/* Central Category Image Showcase */}
-      <div className="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-800 mb-4">
+      <div className="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-800 mb-4 flex items-center justify-center p-2">
         <img 
-          src={cat.image || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80'} 
+          src={getImageUrl(cat.image) || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80'} 
           alt={cat.name} 
-          className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80';
+          }}
+          className="max-h-full max-w-full object-contain group-hover:scale-102 transition-transform duration-300"
         />
       </div>
 

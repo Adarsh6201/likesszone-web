@@ -28,7 +28,7 @@ export const openRazorpayCheckout = async ({
   onSuccess,
   onError,
 }) => {
-  const razorpayKey = (keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim();
+  const razorpayKey = (keyId || (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_RAZORPAY_KEY_ID) || '').trim();
 
   // If key is a placeholder or not provided, run smooth simulated test payment fallback
   const isPlaceholderKey = !razorpayKey || razorpayKey.includes('YOUR_KEY_ID_HERE') || razorpayKey === 'rzp_test_YOUR_KEY_ID_HERE';

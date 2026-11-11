@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginAPI, signupAPI, getProfileAPI, updateProfileAPI } from '../../services/authService';
+import { loginAPI, signupAPI, getProfileAPI, updateProfileAPI, logoutAPI } from '../../services/authService';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -22,6 +22,7 @@ const normaliseUser = (apiUser) => ({
 
 const getSavedUser = () => {
   try {
+    if (typeof window === 'undefined') return null;
     const raw = localStorage.getItem(USER_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
@@ -106,6 +107,7 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.error = null;
+      logoutAPI();
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(REFRESH_KEY);
       localStorage.removeItem(USER_KEY);

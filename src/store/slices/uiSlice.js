@@ -4,10 +4,13 @@ const DARK_MODE_KEY = 'likesszon_dark_mode';
 
 const getInitialDarkMode = () => {
   try {
+    if (typeof window === 'undefined') return false;
     const saved = localStorage.getItem(DARK_MODE_KEY);
     if (saved !== null) return JSON.parse(saved);
-  } catch {}
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+  } catch {
+    return false;
+  }
 };
 
 const uiSlice = createSlice({

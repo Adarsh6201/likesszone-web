@@ -13,17 +13,26 @@ const GUEST_KEY = 'likesszon_guest_cart';
 
 const loadGuestCart = () => {
   try {
+    if (typeof window === 'undefined') return [];
     const raw = localStorage.getItem(GUEST_KEY);
     return raw ? JSON.parse(raw) : [];
   } catch { return []; }
 };
 
 const saveGuestCart = (items) => {
-  localStorage.setItem(GUEST_KEY, JSON.stringify(items));
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(GUEST_KEY, JSON.stringify(items));
+    }
+  } catch {}
 };
 
 const clearGuestCartStorage = () => {
-  localStorage.removeItem(GUEST_KEY);
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(GUEST_KEY);
+    }
+  } catch {}
 };
 
 // ─── Normalise server cart item ──────────────────────────────────────────────

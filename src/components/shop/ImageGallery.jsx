@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../../services/api';
 
 const ImageGallery = ({ images = [], defaultImage, productName }) => {
   const [activeImage, setActiveImage] = useState('');
@@ -52,8 +53,12 @@ const ImageGallery = ({ images = [], defaultImage, productName }) => {
                 }`}
               >
                 <img 
-                  src={img} 
+                  src={getImageUrl(img)} 
                   alt={`${productName || 'Product'} thumbnail ${idx + 1}`} 
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                  }}
                   className="w-full h-full object-contain" 
                 />
               </button>
@@ -70,8 +75,12 @@ const ImageGallery = ({ images = [], defaultImage, productName }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <img 
-          src={activeImage || defaultImage} 
+          src={getImageUrl(activeImage || defaultImage)} 
           alt={productName || 'Product Image'} 
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+          }}
           className="w-full h-full object-contain transition-transform duration-100 ease-out z-0" 
           style={{
             transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,

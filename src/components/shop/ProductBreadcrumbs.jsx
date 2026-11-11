@@ -9,8 +9,8 @@ const ProductBreadcrumbs = ({ product }) => {
       <ChevronRight className="h-3 w-3" />
       <Link to="/shop" className="hover:text-indigo-600">Shop</Link>
       <ChevronRight className="h-3 w-3" />
-      <Link to={`/shop?category=${product.category}`} className="hover:text-indigo-600">
-        {product.category.replace('-', ' ')}
+      <Link to={`/shop?category=${product.category || product.categorySlug || 'all'}`} className="hover:text-indigo-600">
+        {(product.category || product.categorySlug || 'Category').replace(/-/g, ' ')}
       </Link>
       <ChevronRight className="h-3 w-3" />
       <span className="truncate text-slate-800 dark:text-slate-200 font-semibold">{product.name}</span>

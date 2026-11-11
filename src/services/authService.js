@@ -76,3 +76,14 @@ export const updateProfileAPI = async (data) => {
     body,
   });
 };
+
+/**
+ * Logout authenticated user from backend session
+ */
+export const logoutAPI = async () => {
+  try {
+    return await request('/auth/logout', { method: 'POST' });
+  } catch {
+    // Gracefully handle if server is unreachable during logout
+  }
+};

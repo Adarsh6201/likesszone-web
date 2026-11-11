@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, User, Eye, Download, LayoutGrid, Table } from 'lucide-react';
 import AdminOrderDetailModal from './AdminOrderDetailModal';
 import { generateAndDownloadInvoice } from '../../utils/invoiceGenerator';
+import { getImageUrl } from '../../services/api';
 
 const OrdersTable = ({ orders = [], onStatusChange, onPaymentChange }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -67,7 +68,7 @@ const OrdersTable = ({ orders = [], onStatusChange, onPaymentChange }) => {
                 {orders.map((order) => {
                   const items = order.items || [];
                   const firstItem = items[0];
-                  const itemThumb = firstItem?.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                  const itemThumb = getImageUrl(firstItem?.image) || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
 
                   return (
                     <tr
@@ -192,7 +193,7 @@ const OrdersTable = ({ orders = [], onStatusChange, onPaymentChange }) => {
           {orders.map((order) => {
             const items = order.items || [];
             const firstItem = items[0];
-            const itemThumb = firstItem?.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+            const itemThumb = getImageUrl(firstItem?.image) || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
 
             return (
               <div

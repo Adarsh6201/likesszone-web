@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Trash2, Image as ImageIcon, ListPlus, UploadCloud, Sparkles, ChevronLeft, ChevronRight, Star, Link as LinkIcon, Play, Video } from 'lucide-react';
 import { getYouTubeEmbedUrl, getYouTubeVideoId, YoutubeIcon } from '../../utils/youtube';
+import { getImageUrl } from '../../services/api';
 
 const ProductForm = ({ categories = [], initialProduct = null, onSubmit, submitLabel = 'Submit', cancelUrl = '/admin/products' }) => {
   // Form States
@@ -395,7 +396,15 @@ const ProductForm = ({ categories = [], initialProduct = null, onSubmit, submitL
                         : 'border-slate-200 dark:border-slate-800 hover:border-slate-400'
                     }`}
                   >
-                    <img src={imgData} alt="" className="w-full h-full object-contain" />
+                    <img 
+                      src={getImageUrl(imgData)} 
+                      alt="" 
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                      }}
+                      className="w-full h-full object-contain" 
+                    />
                     
                     {/* Badge */}
                     <div className={`absolute top-1 left-1 text-[9px] text-white px-1.5 py-0.5 rounded-full font-mono font-bold flex items-center gap-0.5 shadow-sm ${

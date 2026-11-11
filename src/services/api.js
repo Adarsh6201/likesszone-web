@@ -1,4 +1,4 @@
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+export const BASE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE_URL) || 'http://localhost:5000/api';
 
 /**
  * Resolves an image URL or upload path against the backend server URL
@@ -11,7 +11,8 @@ export const getImageUrl = (imagePath) => {
     return imagePath;
   }
   const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-  return `http://localhost:5000${cleanPath}`;
+  const backendOrigin = BASE_URL ? BASE_URL.replace(/\/api\/?$/, '') : 'http://localhost:5000';
+  return `${backendOrigin}${cleanPath}`;
 };
 
 
@@ -45,7 +46,7 @@ export const request = async (endpoint, options = {}, isRetry = false) => {
   const headers = { ...options.headers };
 
   // Get token from localStorage if exists
-  const token = localStorage.getItem('likesszon_token');
+  const token = typeof window !== 'undefined' ? localStorage.getItem('likesszon_token') : null;
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -74,7 +75,7 @@ export const request = async (endpoint, options = {}, isRetry = false) => {
       !endpoint.includes('/auth/signup') &&
       !endpoint.includes('/auth/refresh-token')
     ) {
-      const refreshToken = localStorage.getItem('likesszon_refresh_token');
+      const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('likesszon_refresh_token') : null;
 
       if (refreshToken) {
         if (isRefreshing) {
@@ -105,7 +106,7 @@ export const request = async (endpoint, options = {}, isRetry = false) => {
 
           if (refreshRes.ok && refreshData?.data?.token) {
             const newToken = refreshData.data.token;
-            localStorage.setItem('likesszon_token', newToken);
+            if (typeof window !== 'undefined') localStorage.setItem('likesszon_token', newToken);
             isRefreshing = false;
             onRefreshed(newToken);
 
@@ -121,10 +122,12 @@ export const request = async (endpoint, options = {}, isRetry = false) => {
           onRefreshFailed(refreshErr);
 
           // Purge stale credentials
-          localStorage.removeItem('likesszon_token');
-          localStorage.removeItem('likesszon_refresh_token');
-          localStorage.removeItem('likesszon_user');
-          window.dispatchEvent(new CustomEvent('likesszon_session_expired'));
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('likesszon_token');
+            localStorage.removeItem('likesszon_refresh_token');
+            localStorage.removeItem('likesszon_user');
+            window.dispatchEvent(new CustomEvent('likesszon_session_expired'));
+          }
 
           throw new Error('Your session has expired. Please sign in again.');
         }

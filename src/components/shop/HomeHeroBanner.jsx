@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchemes } from '../../hooks/useSchemes';
 import { Tag, Sparkles, Copy, Check } from 'lucide-react';
+import { getImageUrl } from '../../services/api';
 
 const HomeHeroBanner = () => {
   const { schemes, fetchSchemes } = useSchemes();
@@ -21,7 +22,7 @@ const HomeHeroBanner = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const bannerImg = activePosterScheme?.bannerImage || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1600&auto=format&fit=crop&q=80";
+  const bannerImg = getImageUrl(activePosterScheme?.bannerImage) || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1600&auto=format&fit=crop&q=80";
 
   return (
     <section className="relative overflow-hidden bg-slate-950 text-white rounded-3xl mx-4 sm:mx-6 lg:mx-8 mt-6 border border-slate-800/80 shadow-2xl">
@@ -30,6 +31,10 @@ const HomeHeroBanner = () => {
         <img 
           src={bannerImg} 
           alt={activePosterScheme?.title || "Hero Banner"} 
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1600&auto=format&fit=crop&q=80";
+          }}
           className="w-full h-full object-cover opacity-35 transition-all duration-700 hover:scale-105"
         />
       </div>

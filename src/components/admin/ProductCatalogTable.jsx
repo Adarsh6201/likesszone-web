@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Edit, Star, Tag, Sparkles } from 'lucide-react';
+import { getImageUrl } from '../../services/api';
 
 const ProductCatalogTable = ({ items = [], onDelete, onToggleFeatured }) => {
   return (
@@ -21,9 +22,13 @@ const ProductCatalogTable = ({ items = [], onDelete, onToggleFeatured }) => {
             <tr key={prod.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20">
               <td className="py-3.5 px-4 flex items-center gap-3">
                 <img
-                  src={prod.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80'}
+                  src={getImageUrl(prod.image) || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80'}
                   alt={prod.name || 'Product'}
-                  className="h-10 w-10 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                  }}
+                  className="h-10 w-10 rounded-lg object-contain p-1 border border-slate-200 dark:border-slate-800"
                 />
                 <div>
                   <p className="font-semibold text-slate-850 dark:text-white line-clamp-1">{prod.name || 'Unnamed Product'}</p>

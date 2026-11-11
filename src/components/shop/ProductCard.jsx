@@ -1,7 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { getImageUrl } from '../../services/api';
 
 const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add to Cart' }) => {
   const mrp = product.originalPrice || product.price;
@@ -17,21 +18,27 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add t
     }
   };
 
+  const imageSrc = getImageUrl(product.image);
+
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow group relative">
-      
+
       {/* Product Image Canvas */}
-      <Link 
-        to={`/product/${product.id}`} 
+      <Link
+        to={`/product/${product.id}`}
         className="block aspect-square w-full overflow-hidden bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 mb-4 flex items-center justify-center p-2"
       >
-        <img 
-          src={product.image} 
-          alt={product.name} 
+        <img
+          src={imageSrc}
+          alt={product.name}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+          }}
           className="max-h-full max-w-full object-contain group-hover:scale-102 transition-transform duration-300"
         />
       </Link>
- 
+
       {/* Info Content Block */}
       <div className="flex-grow flex flex-col justify-between space-y-3">
         <div>
@@ -41,7 +48,7 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add t
               {discount}% OFF
             </span>
           )}
- 
+
           <div className="flex justify-between items-start gap-2">
             <h3 className="font-bold text-slate-900 dark:text-white text-sm line-clamp-2 leading-snug">
               <Link to={`/product/${product.id}`} className="hover:text-indigo-600">
@@ -60,11 +67,11 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add t
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-slate-900 dark:text-indigo-400">
-              ₹{product.price.toFixed(2)}
+              ₹{Number(product.price || 0).toFixed(2)}
             </span>
             {discount > 0 && (
               <span className="text-slate-400 line-through text-xs">
-                ₹{mrp.toFixed(2)}
+                ₹{Number(mrp || 0).toFixed(2)}
               </span>
             )}
           </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
+import { getImageUrl } from '../../services/api';
 
 const CartList = ({ cart = [], onUpdateQuantity, onRemove, onClear }) => {
   return (
@@ -18,18 +19,22 @@ const CartList = ({ cart = [], onUpdateQuantity, onRemove, onClear }) => {
         {cart.map((item) => (
           <div key={item.id} className="flex py-4 first:pt-0 last:pb-0">
             <img
-              src={item.image}
+              src={getImageUrl(item.image)}
               alt={item.name}
-              className="h-24 w-24 rounded-2xl object-cover border border-slate-200 dark:border-slate-800"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+              }}
+              className="h-24 w-24 rounded-2xl object-contain p-1 border border-slate-200 dark:border-slate-800"
             />
             <div className="ml-6 flex-1 flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white">{item.name}</h3>
-                  <p className="text-xs text-slate-400 capitalize mt-1">{item.category.replace('-', ' ')}</p>
+                  <p className="text-xs text-slate-400 capitalize mt-1">{(item.category || item.categorySlug || 'Category').replace(/-/g, ' ')}</p>
                 </div>
                 <span className="text-base font-extrabold text-slate-900 dark:text-indigo-400">
-                  ₹{(item.price * item.quantity).toFixed(2)}
+                  ₹{(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}
                 </span>
               </div>
               
