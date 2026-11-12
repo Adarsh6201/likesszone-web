@@ -16,10 +16,19 @@ const getInitialDarkMode = () => {
 const uiSlice = createSlice({
   name: 'ui',
   initialState: {
-    isDarkMode: getInitialDarkMode(),
+    isDarkMode: false,
     isCartOpen: false,
   },
   reducers: {
+    initDarkMode(state) {
+      const isDark = getInitialDarkMode();
+      state.isDarkMode = isDark;
+      try {
+        const root = window.document.documentElement;
+        if (isDark) root.classList.add('dark');
+        else root.classList.remove('dark');
+      } catch {}
+    },
     setDarkMode(state, action) {
       state.isDarkMode = action.payload;
       // Sync to DOM and localStorage
@@ -55,5 +64,5 @@ const uiSlice = createSlice({
   },
 });
 
-export const { setDarkMode, toggleDarkMode, openCart, closeCart, toggleCart } = uiSlice.actions;
+export const { initDarkMode, setDarkMode, toggleDarkMode, openCart, closeCart, toggleCart } = uiSlice.actions;
 export default uiSlice.reducer;

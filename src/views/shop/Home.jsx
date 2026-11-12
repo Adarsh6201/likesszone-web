@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { useCart } from '../../hooks/useCart';
@@ -18,15 +20,18 @@ const Home = () => {
   }, [fetchProducts, fetchCategories]);
 
   // Explicitly featured products marked by admin
-  const explicitFeatured = products.filter((p) => p.featured);
+  const productList = Array.isArray(products) ? products : [];
+  const categoryList = Array.isArray(categories) ? categories : [];
+
+  const explicitFeatured = productList.filter((p) => p?.featured);
 
   // Show explicitly featured products. If admin has marked none, fallback to top products.
   const featuredProducts = explicitFeatured.length > 0
     ? explicitFeatured
-    : products.slice(0, 4);
+    : productList.slice(0, 4);
 
   // Sorted categories A-Z
-  const sortedCategories = [...categories].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  const sortedCategories = [...categoryList].sort((a, b) => (a?.name || '').localeCompare(b?.name || ''));
 
   return (
     <div className="space-y-12 pb-16">
@@ -40,17 +45,17 @@ const Home = () => {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Shop by Category</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {sortedCategories.map((cat) => (
+          {sortedCategories.map((cat, idx) => (
             <div
-              key={cat.id}
+              key={cat?.id || cat?.slug || idx}
               onClick={() => {
-                navigate(`/shop?category=${cat.slug}`);
+                if (cat?.slug) navigate(`/shop?category=${cat.slug}`);
               }}
               className="group relative h-40 rounded-2xl overflow-hidden shadow-sm cursor-pointer hover:-translate-y-1 transition-all duration-300"
             >
               <img
-                src={getImageUrl(cat.image)}
-                alt={cat.name}
+                src={getImageUrl(cat?.image)}
+                alt={cat?.name || 'Category'}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80';
@@ -59,8 +64,8 @@ const Home = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
               <div className="absolute bottom-4 left-4 right-4 text-white">
-                <h3 className="font-bold text-sm tracking-tight capitalize leading-tight">{cat.name.replace('-', ' ')}</h3>
-                <p className="text-[10px] text-slate-350 line-clamp-1 mt-0.5">{cat.description}</p>
+                <h3 className="font-bold text-sm tracking-tight capitalize leading-tight">{cat?.name ? cat.name.replace('-', ' ') : ''}</h3>
+                <p className="text-[10px] text-slate-350 line-clamp-1 mt-0.5">{cat?.description || ''}</p>
               </div>
             </div>
           ))}
@@ -81,9 +86,9 @@ const Home = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.map((product) => (
+          {featuredProducts.map((product, idx) => (
             <ProductCard
-              key={product.id}
+              key={product?.id || idx}
               product={product}
               onAddToCart={addToCart}
               btnLabel="Add"

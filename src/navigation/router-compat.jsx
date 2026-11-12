@@ -39,13 +39,13 @@ export function useNavigate() {
 
 export function useLocation() {
   const pathname = usePathname() || '/';
-  const searchParams = useNextSearchParams();
-  const searchStr = searchParams ? searchParams.toString() : '';
+  const search = typeof window !== 'undefined' ? (window.location.search || '') : '';
+  const hash = typeof window !== 'undefined' ? (window.location.hash || '') : '';
 
   return {
     pathname,
-    search: searchStr ? `?${searchStr}` : '',
-    hash: '',
+    search,
+    hash,
     state: null,
   };
 }

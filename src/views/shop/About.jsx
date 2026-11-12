@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import LogoImage from '../../assets/logo.png';
 import AboutBenefits from '../../components/shop/AboutBenefits';
@@ -12,7 +14,7 @@ const About = () => {
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-300 via-slate-900 to-slate-950"></div>
         <div className="relative max-w-3xl flex flex-col md:flex-row items-center gap-8 md:gap-12">
           <img 
-            src={LogoImage} 
+            src={LogoImage?.src || LogoImage || '/logo.png'} 
             alt="Likesszon Logo" 
             className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-full shadow-lg border-2 border-indigo-500/20 bg-white" 
           />

@@ -10,12 +10,17 @@ import LogoImage from '../../assets/logo.png';
 
 const AdminLayout = ({ children }) => {
   const { user, logout, isDarkMode, setIsDarkMode } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close mobile sidebar on navigation
   useEffect(() => {
@@ -85,7 +90,7 @@ const AdminLayout = ({ children }) => {
           {!sidebarCollapsed && (
             <div className="flex items-center gap-2">
               <img 
-                src={LogoImage} 
+                src={LogoImage?.src || LogoImage || '/logo.png'} 
                 alt="Likesszon Logo" 
                 className="h-8 w-8 object-contain rounded-full shadow-sm" 
               />
@@ -94,7 +99,7 @@ const AdminLayout = ({ children }) => {
           )}
           {sidebarCollapsed && (
             <img 
-              src={LogoImage} 
+              src={LogoImage?.src || LogoImage || '/logo.png'} 
               alt="Likesszon Logo" 
               className="h-8 w-8 object-contain rounded-full shadow-sm mx-auto" 
             />
@@ -159,7 +164,7 @@ const AdminLayout = ({ children }) => {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-2">
                 <img 
-                  src={LogoImage} 
+                  src={LogoImage?.src || LogoImage || '/logo.png'} 
                   alt="Likesszon Logo" 
                   className="h-8 w-8 object-contain rounded-full shadow-sm" 
                 />
@@ -240,7 +245,7 @@ const AdminLayout = ({ children }) => {
               onClick={() => setIsDarkMode(!isDarkMode)} 
               className="rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
             >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {mounted ? (isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />) : <span className="h-5 w-5 inline-block" />}
             </button>
 
             {/* Notification alert */}
@@ -261,7 +266,7 @@ const AdminLayout = ({ children }) => {
                   className="h-8 w-8 rounded-full border border-indigo-500 object-cover"
                 />
                 <span className="hidden lg:inline text-sm font-semibold text-slate-700 dark:text-slate-300">
-                  {user?.name || 'Administrator'}
+                  {mounted ? (user?.name || 'Administrator') : 'Administrator'}
                 </span>
               </button>
 

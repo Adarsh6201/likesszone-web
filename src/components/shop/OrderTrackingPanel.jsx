@@ -25,12 +25,14 @@ const OrderTrackingPanel = ({ order }) => {
   // Helper to generate tracking logs based on status
   const getTrackingLogs = (ord) => {
     const logs = [];
-    const dateObj = new Date(ord.date);
+    const rawDate = ord.date || ord.createdAt;
+    const parsed = rawDate ? new Date(rawDate) : new Date();
+    const dateObj = isNaN(parsed.getTime()) ? new Date() : parsed;
     
     logs.push({
       title: 'Order Confirmed',
       desc: 'We have received your payment and registered your checkout request.',
-      time: new Date(dateObj.getTime()).toLocaleString('en-IN', { timeZone: 'IST' }),
+      time: new Date(dateObj.getTime()).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
       done: true
     });
 
@@ -38,7 +40,7 @@ const OrderTrackingPanel = ({ order }) => {
       logs.push({
         title: 'Prepared & Packed',
         desc: 'Package packed at Likesszon sorting warehouse and handed over to logistics partner.',
-        time: new Date(dateObj.getTime() + 60 * 60 * 1000 * 4).toLocaleString('en-IN', { timeZone: 'IST' }),
+        time: new Date(dateObj.getTime() + 60 * 60 * 1000 * 4).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
         done: true
       });
     }
@@ -47,7 +49,7 @@ const OrderTrackingPanel = ({ order }) => {
       logs.push({
         title: 'In Transit',
         desc: 'Package departed local sorting hub and is in transit to destination hub.',
-        time: new Date(dateObj.getTime() + 60 * 60 * 1000 * 18).toLocaleString('en-IN', { timeZone: 'IST' }),
+        time: new Date(dateObj.getTime() + 60 * 60 * 1000 * 18).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
         done: true
       });
     }
@@ -56,7 +58,7 @@ const OrderTrackingPanel = ({ order }) => {
       logs.push({
         title: 'Delivered',
         desc: 'Package successfully delivered and handed over to customer.',
-        time: new Date(dateObj.getTime() + 60 * 60 * 1000 * 42).toLocaleString('en-IN', { timeZone: 'IST' }),
+        time: new Date(dateObj.getTime() + 60 * 60 * 1000 * 42).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
         done: true
       });
     } else {

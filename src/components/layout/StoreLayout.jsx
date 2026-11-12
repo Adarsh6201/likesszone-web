@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -13,6 +15,7 @@ import LogoImage from '../../assets/logo.png';
 
 const StoreLayout = ({ children }) => {
   const { user, logout, isAuthenticated, isAdmin, isDarkMode, setIsDarkMode } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const { 
     cart, isCartOpen, closeCart, toggleCart, 
     updateQuantity, removeFromCart, cartCount, cartTotal 
@@ -26,6 +29,10 @@ const StoreLayout = ({ children }) => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load products and categories globally for customer storefront
   useEffect(() => {
@@ -59,7 +66,7 @@ const StoreLayout = ({ children }) => {
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-3 group">
               <img 
-                src={LogoImage} 
+                src={LogoImage?.src || LogoImage || '/logo.png'} 
                 alt="Likesszon Logo" 
                 className="h-10 w-10 object-contain rounded-full shadow-sm" 
               />
@@ -74,7 +81,7 @@ const StoreLayout = ({ children }) => {
               <Link to="/shop" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Shop</Link>
               <Link to="/orders" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">My Orders</Link>
               <Link to="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">About Us</Link>
-              {isAdmin && (
+              {mounted && isAdmin && (
                 <Link to="/admin" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
                   <Shield className="h-4 w-4" />
                   Admin Panel
@@ -105,7 +112,7 @@ const StoreLayout = ({ children }) => {
               className="rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
               aria-label="Toggle theme"
             >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {mounted ? (isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />) : <span className="h-5 w-5 inline-block" />}
             </button>
 
             {/* Cart Icon trigger */}
@@ -115,7 +122,7 @@ const StoreLayout = ({ children }) => {
               aria-label="Open cart"
             >
               <ShoppingBag className="h-5 w-5" />
-              {cartCount > 0 && (
+              {mounted && cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900 animate-pulse">
                   {cartCount}
                 </span>
@@ -124,14 +131,16 @@ const StoreLayout = ({ children }) => {
 
             {/* Profile Menu Dropdown */}
             <div className="relative">
-              {isAuthenticated ? (
+              {!mounted ? (
+                <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 animate-pulse" />
+              ) : isAuthenticated ? (
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center gap-1.5 focus:outline-none"
                 >
                   <img 
-                    src={user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'} 
-                    alt={user.name} 
+                    src={user?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'} 
+                    alt={user?.name || 'User'} 
                     className="h-8 w-8 rounded-full border border-indigo-500 object-cover" 
                   />
                 </button>
@@ -146,13 +155,13 @@ const StoreLayout = ({ children }) => {
               )}
 
               {/* Profile Dropdown Panel */}
-              {isProfileOpen && isAuthenticated && (
+              {mounted && isProfileOpen && isAuthenticated && (
                 <div className="absolute right-0 mt-2.5 w-56 origin-top-right rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-800 dark:bg-slate-900 focus:outline-none z-50">
                   <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">
-                    <p className="text-sm font-semibold truncate text-slate-900 dark:text-white">{user.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{user.email}</p>
+                    <p className="text-sm font-semibold truncate text-slate-900 dark:text-white">{user?.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{user?.email}</p>
                     <span className="inline-block mt-1.5 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300 capitalize">
-                      {user.role}
+                      {user?.role}
                     </span>
                   </div>
                   {isAdmin && (
@@ -221,10 +230,10 @@ const StoreLayout = ({ children }) => {
               <Link to="/shop" className="block py-2 text-slate-700 dark:text-slate-300">Shop</Link>
               <Link to="/orders" className="block py-2 text-slate-700 dark:text-slate-300">My Orders</Link>
               <Link to="/about" className="block py-2 text-slate-700 dark:text-slate-300">About Us</Link>
-              {isAuthenticated && (
+              {mounted && isAuthenticated && (
                 <Link to="/settings" className="block py-2 text-slate-700 dark:text-slate-300">Settings</Link>
               )}
-              {isAdmin && (
+              {mounted && isAdmin && (
                 <Link to="/admin" className="block py-2 text-indigo-600 dark:text-indigo-400 font-semibold">
                   Admin Panel
                 </Link>
@@ -268,7 +277,7 @@ const StoreLayout = ({ children }) => {
 
               {/* Drawer Body - Items List */}
               <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
-                {cart.length === 0 ? (
+                {(!cart || cart.length === 0) ? (
                   <div className="flex flex-col items-center justify-center h-full text-center">
                     <div className="h-16 w-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-4">
                       <ShoppingBag className="h-8 w-8" />
@@ -284,11 +293,11 @@ const StoreLayout = ({ children }) => {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {cart.map((item) => (
-                      <div key={item.id} className="flex py-2 border-b border-slate-100 dark:border-slate-800/50 pb-4">
+                    {(Array.isArray(cart) ? cart : []).map((item, idx) => (
+                      <div key={item?.id || idx} className="flex py-2 border-b border-slate-100 dark:border-slate-800/50 pb-4">
                         <img 
-                          src={getImageUrl(item.image)} 
-                          alt={item.name} 
+                          src={getImageUrl(item?.image)} 
+                          alt={item?.name || 'Product'} 
                           onError={(e) => {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
@@ -298,30 +307,30 @@ const StoreLayout = ({ children }) => {
                         <div className="ml-4 flex-1 flex flex-col justify-between">
                           <div>
                             <div className="flex justify-between text-sm font-medium">
-                              <h3 className="text-slate-900 dark:text-white truncate max-w-[150px]">{item.name}</h3>
+                              <h3 className="text-slate-900 dark:text-white truncate max-w-[150px]">{item?.name || 'Product'}</h3>
                               <p className="ml-2 text-slate-900 dark:text-indigo-400 font-semibold">
-                                ₹{(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                                ₹{(Number(item?.price || 0) * (item?.quantity || 1)).toFixed(2)}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center justify-between text-xs">
                             <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800">
                               <button 
-                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                onClick={() => updateQuantity(item?.id, (item?.quantity || 1) - 1)}
                                 className="p-1 hover:text-indigo-600"
                               >
                                 <Minus className="h-3 w-3" />
                               </button>
-                              <span className="px-2.5 font-bold">{item.quantity}</span>
+                              <span className="px-2.5 font-bold">{item?.quantity || 1}</span>
                               <button 
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                onClick={() => updateQuantity(item?.id, (item?.quantity || 1) + 1)}
                                 className="p-1 hover:text-indigo-600"
                               >
                                 <Plus className="h-3 w-3" />
                               </button>
                             </div>
                             <button 
-                              onClick={() => removeFromCart(item.id)}
+                              onClick={() => removeFromCart(item?.id)}
                               className="text-red-500 hover:text-red-700 p-1"
                             >
                               <Trash2 className="h-4 w-4" />

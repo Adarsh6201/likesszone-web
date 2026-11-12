@@ -55,10 +55,14 @@ export const generateAndDownloadInvoice = (order) => {
   const gstAmount = Math.round(subtotal * 0.18 * 100) / 100;
   const totalAmount = order.total || (subtotal + gstAmount);
 
-  // Convert image URL to absolute URL if needed for iframe
-  const logoSrc = LogoImage.startsWith('http') || LogoImage.startsWith('data:') 
-    ? LogoImage 
-    : `${window.location.origin}${LogoImage}`;
+  // Convert image URL to absolute URL safely (handles Next.js imported object or string)
+  const rawLogo = (typeof LogoImage === 'object' && LogoImage?.src)
+    ? LogoImage.src
+    : (typeof LogoImage === 'string' ? LogoImage : '/logo.png');
+
+  const logoSrc = rawLogo.startsWith('http') || rawLogo.startsWith('data:')
+    ? rawLogo
+    : `${typeof window !== 'undefined' ? window.location.origin : ''}${rawLogo.startsWith('/') ? '' : '/'}${rawLogo}`;
 
   const invoiceHTML = `
     <!DOCTYPE html>
@@ -518,26 +522,43 @@ export const generateAndDownloadInvoice = (order) => {
   `;
 
   // Create temporary iframe for invisible background print triggering
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'fixed';
-  iframe.style.right = '0';
-  iframe.style.bottom = '0';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = '0';
+  try {
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '1px';
+    iframe.style.height = '1px';
+    iframe.style.opacity = '0.01';
+    iframe.style.border = 'none';
 
-  document.body.appendChild(iframe);
-  const doc = iframe.contentWindow.document;
-  doc.open();
-  doc.write(invoiceHTML);
-  doc.close();
+    document.body.appendChild(iframe);
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(invoiceHTML);
+    doc.close();
 
-  // Cleanup after printing
-  setTimeout(() => {
-    try {
-      document.body.removeChild(iframe);
-    } catch (e) {
-      // Ignore
-    }
-  }, 3000);
+    setTimeout(() => {
+      try {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      } catch (err) {
+        console.warn("Iframe print blocked, opening window:", err);
+        const win = window.open('', '_blank');
+        if (win) {
+          win.document.write(invoiceHTML);
+          win.document.close();
+          win.focus();
+          win.print();
+        }
+      }
+      setTimeout(() => {
+        try {
+          document.body.removeChild(iframe);
+        } catch (_) {}
+      }, 5000);
+    }, 400);
+  } catch (err) {
+    console.error("Failed to generate invoice:", err);
+  }
 };

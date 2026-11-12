@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
@@ -5,8 +7,10 @@ import { useAuth } from '../../hooks/useAuth';
 import { getImageUrl } from '../../services/api';
 
 const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add to Cart' }) => {
-  const mrp = product.originalPrice || product.price;
-  const discount = mrp > product.price ? Math.round(((mrp - product.price) / mrp) * 100) : 0;
+  if (!product) return null;
+  const price = Number(product.price || 0);
+  const mrp = Number(product.originalPrice || price);
+  const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -25,12 +29,12 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add t
 
       {/* Product Image Canvas */}
       <Link
-        to={`/product/${product.id}`}
+        to={`/product/${product.id || ''}`}
         className="block aspect-square w-full overflow-hidden bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 mb-4 flex items-center justify-center p-2"
       >
         <img
           src={imageSrc}
-          alt={product.name}
+          alt={product.name || 'Product'}
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';

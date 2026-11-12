@@ -1,4 +1,4 @@
-export const BASE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE_URL) || 'http://localhost:5000/api';
+export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
 /**
  * Resolves an image URL or upload path against the backend server URL
@@ -7,12 +7,20 @@ export const BASE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUB
  */
 export const getImageUrl = (imagePath) => {
   if (!imagePath) return '';
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:') || imagePath.startsWith('blob:')) {
-    return imagePath;
+  const str = typeof imagePath === 'object' ? (imagePath?.src || '') : String(imagePath || '');
+  if (!str) return '';
+  if (str.startsWith('data:') || str.startsWith('blob:')) {
+    return str;
   }
-  const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-  const backendOrigin = BASE_URL ? BASE_URL.replace(/\/api\/?$/, '') : 'http://localhost:5000';
-  return `${backendOrigin}${cleanPath}`;
+  // Strip hardcoded localhost/backend URLs so images load relative over HTTPS
+  if (str.includes('/uploads/')) {
+    const parts = str.split('/uploads/');
+    return `/uploads/${parts[1]}`;
+  }
+  if (str.startsWith('http://') || str.startsWith('https://')) {
+    return str;
+  }
+  return str.startsWith('/') ? str : `/${str}`;
 };
 
 

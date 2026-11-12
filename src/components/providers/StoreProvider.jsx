@@ -3,14 +3,20 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import store from '../../store';
-import { fetchProfileThunk, logout } from '../../store/slices/authSlice';
-import { fetchCartThunk, mergeGuestCartThunk } from '../../store/slices/cartSlice';
+import { initAuth, fetchProfileThunk, logout } from '../../store/slices/authSlice';
+import { initCart, fetchCartThunk, mergeGuestCartThunk } from '../../store/slices/cartSlice';
+import { initDarkMode } from '../../store/slices/uiSlice';
 import { fetchProductsThunk, fetchCategoriesThunk } from '../../store/slices/productSlice';
 import { fetchOrdersThunk } from '../../store/slices/orderSlice';
 
 function AppInit() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    // Safely rehydrate local storage state ONLY on client mount (avoids SSR hydration mismatch)
+    store.dispatch(initDarkMode());
+    store.dispatch(initAuth());
+    store.dispatch(initCart());
 
     const token = localStorage.getItem('likesszon_token');
 

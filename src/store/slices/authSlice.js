@@ -99,11 +99,14 @@ export const updateProfileThunk = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: getSavedUser(),
+    user: null,
     loading: false,
     error: null,
   },
   reducers: {
+    initAuth(state) {
+      state.user = getSavedUser();
+    },
     logout(state) {
       state.user = null;
       state.error = null;
@@ -153,5 +156,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearAuthError } = authSlice.actions;
+export const { initAuth, logout, clearAuthError } = authSlice.actions;
 export default authSlice.reducer;

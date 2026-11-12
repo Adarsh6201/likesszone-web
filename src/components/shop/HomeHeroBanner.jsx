@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchemes } from '../../hooks/useSchemes';
@@ -13,7 +15,8 @@ const HomeHeroBanner = () => {
   }, [fetchSchemes]);
 
   // Find active scheme with a poster image, or fallback to any active scheme
-  const activePosterScheme = schemes.find((s) => s.isActive && s.bannerImage) || schemes.find((s) => s.isActive);
+  const schemeList = Array.isArray(schemes) ? schemes : [];
+  const activePosterScheme = schemeList.find((s) => s?.isActive && s?.bannerImage) || schemeList.find((s) => s?.isActive);
 
   const handleCopyCode = (code) => {
     if (!code) return;

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import LoginForm from '../../components/auth/LoginForm';
-import QuickLoginPanel from '../../components/auth/QuickLoginPanel';
 import LogoImage from '../../assets/logo.png';
 
 const Login = () => {
@@ -40,7 +39,7 @@ const Login = () => {
         {/* Header */}
         <div className="text-center space-y-2">
           <img 
-            src={LogoImage} 
+            src={LogoImage?.src || LogoImage || '/logo.png'} 
             alt="Likesszon Logo" 
             className="h-20 w-20 object-contain rounded-full shadow-md mx-auto mb-2 border border-slate-100 bg-white" 
           />
@@ -65,12 +64,6 @@ const Login = () => {
         <LoginForm 
           onSubmit={handleLoginFormSubmit}
           loading={loading}
-        />
-
-        <QuickLoginPanel 
-          onQuickLogin={(quickEmail, quickPassword) => {
-            handleLoginFormSubmit(quickEmail, quickPassword);
-          }}
         />
 
         <div className="text-center text-xs text-slate-500">

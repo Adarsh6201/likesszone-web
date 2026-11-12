@@ -136,19 +136,23 @@ const computeTotals = (items) => {
 
 // ─── Slice ──────────────────────────────────────────────────────────────────
 
-const guestCartItems = loadGuestCart();
-const guestTotals = computeTotals(guestCartItems);
-
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
-    items: guestCartItems,
-    total: guestTotals.total,
-    itemCount: guestTotals.itemCount,
+    items: [],
+    total: 0,
+    itemCount: 0,
     loading: false,
     error: null,
   },
   reducers: {
+    initCart(state) {
+      const items = loadGuestCart();
+      const t = computeTotals(items);
+      state.items = items;
+      state.total = t.total;
+      state.itemCount = t.itemCount;
+    },
     // ── Guest cart actions ──────────────────────────────────────────────────
     guestAddItem(state, action) {
       const { product, quantity } = action.payload;
@@ -233,5 +237,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const { guestAddItem, guestUpdateItem, guestRemoveItem, guestClearCart } = cartSlice.actions;
+export const { initCart, guestAddItem, guestUpdateItem, guestRemoveItem, guestClearCart } = cartSlice.actions;
 export default cartSlice.reducer;
