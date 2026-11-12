@@ -14,32 +14,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  async redirects() {
-    return [
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'likesszon.in',
-          },
-        ],
-        destination: 'https://likesszon.com/:path*',
-        permanent: true,
-      },
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'www.likesszon.in',
-          },
-        ],
-        destination: 'https://likesszon.com/:path*',
-        permanent: true,
-      },
-    ];
-  },
   async rewrites() {
     return [
       {
