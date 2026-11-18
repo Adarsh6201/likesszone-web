@@ -6,7 +6,6 @@ import { useCart } from '../../hooks/useCart';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductCard from '../../components/shop/ProductCard';
-import HomeHeroBanner from '../../components/shop/HomeHeroBanner';
 import { getImageUrl } from '../../services/api';
 
 const Home = () => {
@@ -34,10 +33,7 @@ const Home = () => {
   const sortedCategories = [...categoryList].sort((a, b) => (a?.name || '').localeCompare(b?.name || ''));
 
   return (
-    <div className="space-y-12 pb-16">
-
-      {/* Hero Banner Section */}
-      <HomeHeroBanner />
+    <div className="space-y-12 pb-16 pt-4 sm:pt-6">
 
       {/* Categories Horizontal Selector */}
       <section id="categories" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
