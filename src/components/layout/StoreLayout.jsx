@@ -58,58 +58,64 @@ const StoreLayout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200">
       
-      {/* --- Sticky Storefront Header --- */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      {/* --- Sticky Storefront Header (#bd1f35 Theme) --- */}
+      <header className="sticky top-0 z-40 w-full bg-gradient-to-r from-[#bd1f35] to-[#8a0025] border-b border-[#70001d] shadow-md">
+        <div className="w-full flex h-16 items-center justify-between px-3 sm:px-6 lg:px-8">
           
-          {/* Logo & Brand */}
-          <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-3 group">
+          {/* Logo & Brand (Far Left) */}
+          <div className="flex items-center gap-4 lg:gap-6 shrink-0">
+            <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
               <img 
                 src={LogoImage?.src || LogoImage || '/logo.png'} 
                 alt="Likesszon Logo" 
-                className="h-10 w-10 object-contain rounded-full shadow-sm" 
+                className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-full bg-white p-0.5 shadow-sm shrink-0" 
               />
-              <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-white dark:to-slate-300">
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-white select-none">
                 Likesszon
               </span>
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-              <Link to="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Home</Link>
-              <Link to="/shop" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Shop</Link>
-              <Link to="/orders" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">My Orders</Link>
-              <Link to="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">About Us</Link>
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium text-white/90">
+              <Link to="/" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Home</Link>
+              <Link to="/shop" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Shop</Link>
+              <Link to="/orders" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">My Orders</Link>
+              <Link to="/about" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">About Us</Link>
               {mounted && isAdmin && (
-                <Link to="/admin" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
-                  <Shield className="h-4 w-4" />
+                <Link to="/admin" className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full font-semibold text-xs transition-colors border border-white/30 ml-1">
+                  <Shield className="h-3.5 w-3.5" />
                   Admin Panel
                 </Link>
               )}
             </nav>
           </div>
 
-          {/* Search bar */}
-          <div className="hidden sm:block flex-1 max-w-md mx-8">
-            <form onSubmit={handleSearchSubmit} className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          {/* Search bar with Search Button */}
+          <div className="hidden sm:flex flex-1 max-w-md mx-3 lg:mx-6">
+            <form onSubmit={handleSearchSubmit} className="relative w-full flex items-center">
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search products, brands, collections..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-slate-200 bg-slate-50 py-1.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-1 focus:ring-indigo-500 dark:border-slate-800 dark:bg-slate-800/50 dark:focus:bg-slate-800"
+                className="w-full rounded-full border-none bg-white py-1.5 pl-10 pr-20 text-sm text-slate-900 placeholder:text-slate-400 shadow-inner outline-none focus:ring-2 focus:ring-white/80"
               />
+              <button
+                type="submit"
+                className="absolute right-1 top-1 bottom-1 px-3.5 bg-[#bd1f35] hover:bg-[#8a0025] text-white rounded-full text-xs font-semibold flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+              >
+                Search
+              </button>
             </form>
           </div>
 
-          {/* Action Icons */}
-          <div className="flex items-center gap-4">
+          {/* Action Icons & Profile (Right side) */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Dark Mode toggle */}
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)} 
-              className="rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
+              className="rounded-full p-2 text-white/90 hover:text-white hover:bg-white/15 transition-colors"
               aria-label="Toggle theme"
             >
               {mounted ? (isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />) : <span className="h-5 w-5 inline-block" />}
@@ -118,12 +124,12 @@ const StoreLayout = ({ children }) => {
             {/* Cart Icon trigger */}
             <button 
               onClick={toggleCart} 
-              className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
+              className="relative rounded-full p-2 text-white/90 hover:text-white hover:bg-white/15 transition-colors"
               aria-label="Open cart"
             >
               <ShoppingBag className="h-5 w-5" />
               {mounted && cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900 animate-pulse">
+                <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[11px] font-black text-[#bd1f35] ring-2 ring-[#bd1f35] shadow-sm animate-pulse">
                   {cartCount}
                 </span>
               )}
@@ -132,7 +138,7 @@ const StoreLayout = ({ children }) => {
             {/* Profile Menu Dropdown */}
             <div className="relative">
               {!mounted ? (
-                <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 animate-pulse" />
+                <div className="h-8 w-8 rounded-full bg-white/20 animate-pulse" />
               ) : isAuthenticated ? (
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -141,22 +147,22 @@ const StoreLayout = ({ children }) => {
                   <img 
                     src={user?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'} 
                     alt={user?.name || 'User'} 
-                    className="h-8 w-8 rounded-full border border-indigo-500 object-cover" 
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full ring-2 ring-white/80 object-cover" 
                   />
                 </button>
               ) : (
                 <Link 
                   to="/login"
-                  className="flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-400"
+                  className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white bg-white/15 hover:bg-white/25 px-3.5 py-1.5 rounded-full border border-white/30 transition-all"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4" />
                   <span className="hidden sm:inline">Sign In</span>
                 </Link>
               )}
 
               {/* Profile Dropdown Panel */}
               {mounted && isProfileOpen && isAuthenticated && (
-                <div className="absolute right-0 mt-2.5 w-56 origin-top-right rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-800 dark:bg-slate-900 focus:outline-none z-50">
+                <div className="absolute right-0 mt-2.5 w-56 origin-top-right rounded-xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-slate-900 focus:outline-none z-50">
                   <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">
                     <p className="text-sm font-semibold truncate text-slate-900 dark:text-white">{user?.name}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{user?.email}</p>
@@ -167,7 +173,7 @@ const StoreLayout = ({ children }) => {
                   {isAdmin && (
                     <Link
                       to="/admin"
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#bd1f35] dark:text-[#f17081] font-semibold hover:bg-slate-50 dark:hover:bg-slate-800/50"
                     >
                       <Shield className="h-4 w-4" />
                       Admin Dashboard
@@ -204,7 +210,7 @@ const StoreLayout = ({ children }) => {
             {/* Mobile menu trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+              className="lg:hidden rounded-lg p-2 text-white hover:bg-white/15 transition-colors"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -213,28 +219,35 @@ const StoreLayout = ({ children }) => {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 space-y-3">
+          <div className="lg:hidden border-t border-[#8a0025] bg-[#bd1f35] px-4 py-4 space-y-3 text-white">
             {/* Search (Mobile) */}
-            <form onSubmit={handleSearchSubmit} className="relative">
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-10 pr-4 text-sm dark:border-slate-800 dark:bg-slate-800"
+                className="w-full rounded-full border-none bg-white py-1.5 pl-10 pr-20 text-sm text-slate-900 placeholder:text-slate-400 outline-none"
               />
+              <button
+                type="submit"
+                className="absolute right-1 top-1 bottom-1 px-3 bg-[#8a0025] text-white rounded-full text-xs font-semibold"
+              >
+                Search
+              </button>
             </form>
-            <div className="flex flex-col gap-2 font-medium">
-              <Link to="/" className="block py-2 text-slate-700 dark:text-slate-300">Home</Link>
-              <Link to="/shop" className="block py-2 text-slate-700 dark:text-slate-300">Shop</Link>
-              <Link to="/orders" className="block py-2 text-slate-700 dark:text-slate-300">My Orders</Link>
-              <Link to="/about" className="block py-2 text-slate-700 dark:text-slate-300">About Us</Link>
+            <div className="flex flex-col gap-1 font-medium pt-2">
+              <Link to="/" className="block py-2 px-2 hover:bg-white/10 rounded-lg text-white">Home</Link>
+              <Link to="/shop" className="block py-2 px-2 hover:bg-white/10 rounded-lg text-white">Shop</Link>
+              <Link to="/orders" className="block py-2 px-2 hover:bg-white/10 rounded-lg text-white">My Orders</Link>
+              <Link to="/about" className="block py-2 px-2 hover:bg-white/10 rounded-lg text-white">About Us</Link>
               {mounted && isAuthenticated && (
-                <Link to="/settings" className="block py-2 text-slate-700 dark:text-slate-300">Settings</Link>
+                <Link to="/settings" className="block py-2 px-2 hover:bg-white/10 rounded-lg text-white">Settings</Link>
               )}
               {mounted && isAdmin && (
-                <Link to="/admin" className="block py-2 text-indigo-600 dark:text-indigo-400 font-semibold">
+                <Link to="/admin" className="flex items-center gap-1.5 py-2 px-2 bg-white/20 rounded-lg text-white font-semibold">
+                  <Shield className="h-4 w-4" />
                   Admin Panel
                 </Link>
               )}
