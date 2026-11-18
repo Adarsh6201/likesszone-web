@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Star, ShoppingBag, Check } from 'lucide-react';
+import { Star, ShoppingBag, Zap, Check } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { getImageUrl } from '../../services/api';
 
@@ -11,13 +11,26 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add' 
   const price = Number(product.price || 0);
   const mrp = Number(product.originalPrice || price);
   const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+  const isOutOfStock = product.stock !== undefined && product.stock !== null
+    ? Number(product.stock) <= 0
+    : false;
+
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleAddClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     onAddToCart(product, 1);
+  };
+
+  const handleBuyNowClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isOutOfStock) return;
+    onAddToCart(product, 1);
+    navigate('/checkout');
   };
 
   const imageSrc = getImageUrl(product.image);
@@ -38,20 +51,33 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add' 
             e.currentTarget.onerror = null;
             e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
           }}
-          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+          className={`max-h-full max-w-full object-contain transition-transform duration-300 ${
+            isOutOfStock ? 'opacity-70 grayscale-30' : 'group-hover:scale-105'
+          }`}
         />
 
         {/* Discount Ribbon Tag */}
-        {discount > 0 && (
+        {discount > 0 && !isOutOfStock && (
           <span className="absolute top-2 left-2 bg-[#bd1f35] text-white text-[10px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
             {discount}% OFF
           </span>
         )}
 
-        {/* Fast Delivery Badge */}
-        <span className="absolute bottom-1.5 left-2 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/50">
-          Fast Delivery
-        </span>
+        {/* Out of Stock Overlay Badge */}
+        {isOutOfStock ? (
+          <>
+            <span className="absolute top-2 right-2 bg-red-600 text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
+              Out of Stock
+            </span>
+            <span className="absolute bottom-1.5 left-2 text-[9px] font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/70 px-1.5 py-0.5 rounded border border-red-200 dark:border-red-800">
+              Unavailable
+            </span>
+          </>
+        ) : (
+          <span className="absolute bottom-1.5 left-2 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/50">
+            Fast Delivery
+          </span>
+        )}
       </Link>
 
       {/* Info Content Block */}
@@ -99,14 +125,40 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add' 
             </p>
           )}
 
-          {/* Add to Cart Button */}
-          <button
-            onClick={handleAddClick}
-            className="w-full mt-2.5 py-1.5 px-3 bg-[#bd1f35] hover:bg-[#8a0025] active:scale-98 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
-          >
-            <ShoppingBag className="h-3.5 w-3.5" />
-            <span>{btnLabel}</span>
-          </button>
+          {/* Action Buttons: Add to Cart and Buy Now side-by-side */}
+          <div className="flex items-center gap-1.5 mt-2.5">
+            {/* Add Button */}
+            <button
+              type="button"
+              onClick={handleAddClick}
+              disabled={isOutOfStock}
+              className={`flex-1 py-1.5 px-1.5 sm:px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                isOutOfStock
+                  ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-300 dark:border-slate-700'
+                  : 'bg-white dark:bg-slate-900 border border-[#bd1f35] text-[#bd1f35] hover:bg-[#bd1f35]/10 active:scale-95 shadow-2xs cursor-pointer'
+              }`}
+              title={isOutOfStock ? 'Item is out of stock' : 'Add to cart'}
+            >
+              <ShoppingBag className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{isOutOfStock ? 'Out' : btnLabel}</span>
+            </button>
+
+            {/* Buy Now Button */}
+            <button
+              type="button"
+              onClick={handleBuyNowClick}
+              disabled={isOutOfStock}
+              className={`flex-1 py-1.5 px-1.5 sm:px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                isOutOfStock
+                  ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-300 dark:border-slate-700'
+                  : 'bg-gradient-to-r from-[#bd1f35] to-[#8a0025] hover:opacity-95 text-white active:scale-95 shadow-xs cursor-pointer'
+              }`}
+              title={isOutOfStock ? 'Item is out of stock' : 'Buy Now'}
+            >
+              <Zap className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">Buy Now</span>
+            </button>
+          </div>
         </div>
       </div>
 
