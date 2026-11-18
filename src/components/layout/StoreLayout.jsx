@@ -656,9 +656,9 @@ const StoreLayout = ({ children }) => {
           <span>Back to Top</span>
         </button>
 
-        {/* Main Footer Content Container (Full Width Space Optimized) */}
-        <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+        {/* Main Footer Content Container (Full Width Edge-to-Edge) */}
+        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-10 sm:py-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 xl:gap-14">
             
             {/* Col 1: Brand & Contact Info */}
             <div className="space-y-4">
