@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
@@ -9,7 +9,7 @@ import { getImageUrl } from '../../services/api';
 import { 
   ShoppingBag, Search, User, X, Plus, Minus, Trash2, 
   ArrowRight, Shield, LogOut, Sun, Moon, ShoppingCart, Menu, Settings,
-  Phone, MapPin
+  Phone, MapPin, ChevronDown, Check
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
 
@@ -24,7 +24,14 @@ const StoreLayout = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
+  // Amazon-style Location State
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const [pincodeInput, setPincodeInput] = useState('');
+  const [currentLocation, setCurrentLocation] = useState({ city: 'Hazaribagh', zip: '825301' });
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const locationRef = useRef(null);
+
   const { fetchProducts, fetchCategories } = useProducts();
 
   const navigate = useNavigate();
@@ -33,6 +40,81 @@ const StoreLayout = ({ children }) => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Initialize location & saved addresses from localStorage or user record
+  useEffect(() => {
+    try {
+      const savedLoc = localStorage.getItem('likesszon_delivery_location');
+      if (savedLoc) {
+        setCurrentLocation(JSON.parse(savedLoc));
+      } else if (user?.city || user?.zipCode) {
+        setCurrentLocation({
+          city: user.city || 'Hazaribagh',
+          zip: user.zipCode || '825301',
+        });
+      }
+
+      const storedAddresses = localStorage.getItem('likesszon_saved_addresses');
+      if (storedAddresses) {
+        setSavedAddresses(JSON.parse(storedAddresses));
+      } else {
+        setSavedAddresses([
+          {
+            id: 'addr-1',
+            name: user?.name || 'Customer',
+            address: user?.address || 'New Area 1st Gali Okni near Joda Shiv Mandir',
+            city: user?.city || 'Hazaribagh',
+            zip: user?.zipCode || '825301',
+            type: 'Home',
+          },
+        ]);
+      }
+    } catch (e) {
+      console.error('Error reading location/address:', e);
+    }
+  }, [user]);
+
+  // Click outside to close location dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (locationRef.current && !locationRef.current.contains(e.target)) {
+        setIsLocationOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelectAddress = (addr) => {
+    const loc = { city: addr.city || 'Hazaribagh', zip: addr.zip || '825301' };
+    setCurrentLocation(loc);
+    try {
+      localStorage.setItem('likesszon_delivery_location', JSON.stringify(loc));
+    } catch (e) {}
+    setIsLocationOpen(false);
+  };
+
+  const handleSelectCity = (city, zip) => {
+    const loc = { city, zip };
+    setCurrentLocation(loc);
+    try {
+      localStorage.setItem('likesszon_delivery_location', JSON.stringify(loc));
+    } catch (e) {}
+    setIsLocationOpen(false);
+  };
+
+  const handlePincodeSubmit = (e) => {
+    e.preventDefault();
+    if (pincodeInput.length === 6) {
+      const loc = { city: 'Delivery Area', zip: pincodeInput };
+      setCurrentLocation(loc);
+      try {
+        localStorage.setItem('likesszon_delivery_location', JSON.stringify(loc));
+      } catch (e) {}
+      setPincodeInput('');
+      setIsLocationOpen(false);
+    }
+  };
 
   // Load products and categories globally for customer storefront
   useEffect(() => {
@@ -45,6 +127,7 @@ const StoreLayout = ({ children }) => {
     closeCart();
     setIsProfileOpen(false);
     setMobileMenuOpen(false);
+    setIsLocationOpen(false);
   }, [location.pathname]);
 
   const handleSearchSubmit = (e) => {
@@ -74,7 +157,159 @@ const StoreLayout = ({ children }) => {
             </span>
           </Link>
 
-          {/* 2. Search bar with Search Button (Directly after Likesszon name) */}
+          {/* 1.5. Amazon-style Location / Address Selector (Between Brand & Search) */}
+          <div className="relative shrink-0" ref={locationRef}>
+            <button
+              type="button"
+              onClick={() => setIsLocationOpen(!isLocationOpen)}
+              className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-xl hover:bg-white/10 text-left transition-colors text-white group cursor-pointer border border-transparent hover:border-white/20 select-none"
+              title="Change Delivery Location"
+            >
+              <MapPin className="h-4 w-4 text-white/90 group-hover:text-white shrink-0 mt-0.5" />
+              <div className="flex flex-col leading-tight">
+                <span className="text-[10px] text-white/75 font-normal truncate max-w-[110px]">
+                  Deliver to {user?.name ? user.name.split(' ')[0] : 'Guest'}
+                </span>
+                <span className="text-xs font-bold text-white flex items-center gap-0.5 truncate max-w-[130px]">
+                  {currentLocation.city} {currentLocation.zip}
+                  <ChevronDown className="h-3 w-3 text-white/80 shrink-0 ml-0.5 transition-transform duration-200 group-hover:translate-y-0.5" />
+                </span>
+              </div>
+            </button>
+
+            {/* Location Selector Dropdown Panel */}
+            {mounted && isLocationOpen && (
+              <div className="absolute left-0 mt-2.5 w-80 sm:w-96 origin-top-left rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl dark:border-slate-800 dark:bg-slate-900 focus:outline-none z-50 text-slate-800 dark:text-slate-100">
+                {/* Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-[#bd1f35]" /> Choose your location
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsLocationOpen(false)}
+                    className="rounded-full p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 mb-3 leading-relaxed">
+                  Select a delivery location to check product availability and delivery speeds.
+                </p>
+
+                {/* Saved addresses options (if available) */}
+                {savedAddresses && savedAddresses.length > 0 && (
+                  <div className="mb-3 space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      Saved Addresses
+                    </p>
+                    {savedAddresses.map((addr) => {
+                      const isSelected = currentLocation.zip === addr.zip;
+                      return (
+                        <div
+                          key={addr.id || addr.zip}
+                          onClick={() => handleSelectAddress(addr)}
+                          className={`flex items-start justify-between p-2 rounded-xl border text-xs cursor-pointer transition-all ${
+                            isSelected
+                              ? 'border-[#bd1f35] bg-[#bd1f35]/5 dark:bg-[#bd1f35]/10 text-slate-900 dark:text-white font-medium'
+                              : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300'
+                          }`}
+                        >
+                          <div className="flex-1 pr-2">
+                            <div className="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white">
+                              <span>{addr.type || 'Home'}</span>
+                              <span className="text-[10px] text-slate-400 font-normal">({addr.zip})</span>
+                            </div>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                              {addr.address}, {addr.city}
+                            </p>
+                          </div>
+                          {isSelected && <Check className="h-4 w-4 text-[#bd1f35] shrink-0 mt-0.5" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Enter Pincode form */}
+                <form onSubmit={handlePincodeSubmit} className="mb-3">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                    Or Enter an Indian Pincode
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      maxLength={6}
+                      placeholder="e.g. 825301"
+                      value={pincodeInput}
+                      onChange={(e) => setPincodeInput(e.target.value.replace(/\D/g, ''))}
+                      className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 text-xs text-slate-900 dark:text-white outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] transition-all"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-[#bd1f35] hover:bg-[#8a0025] text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shadow-sm cursor-pointer"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </form>
+
+                {/* Popular Delivery Cities */}
+                <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                    Popular Delivery Locations
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { city: 'Hazaribagh', zip: '825301' },
+                      { city: 'Ranchi', zip: '834001' },
+                      { city: 'Patna', zip: '800001' },
+                      { city: 'Kolkata', zip: '700001' },
+                      { city: 'Delhi', zip: '110001' },
+                      { city: 'Bengaluru', zip: '560001' }
+                    ].map((c) => (
+                      <button
+                        key={c.zip}
+                        type="button"
+                        onClick={() => handleSelectCity(c.city, c.zip)}
+                        className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                          currentLocation.zip === c.zip
+                            ? 'bg-[#bd1f35] text-white border-[#bd1f35] font-semibold'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-transparent hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        {c.city}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Footer link */}
+                <div className="mt-3 pt-2 text-center border-t border-slate-100 dark:border-slate-800">
+                  {isAuthenticated ? (
+                    <Link
+                      to="/settings"
+                      onClick={() => setIsLocationOpen(false)}
+                      className="text-[11px] text-[#bd1f35] dark:text-[#f17081] font-semibold hover:underline inline-flex items-center gap-1"
+                    >
+                      Manage saved addresses in Settings →
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/login"
+                      onClick={() => setIsLocationOpen(false)}
+                      className="text-[11px] text-[#bd1f35] dark:text-[#f17081] font-semibold hover:underline inline-flex items-center gap-1"
+                    >
+                      Sign in to see your saved addresses →
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Search bar with Search Button (Directly after Location selector) */}
           <div className="hidden sm:flex flex-1 max-w-md lg:max-w-lg">
             <form onSubmit={handleSearchSubmit} className="relative w-full flex items-center">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none" />
@@ -218,6 +453,21 @@ const StoreLayout = ({ children }) => {
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div className="lg:hidden border-t border-[#8a0025] bg-[#bd1f35] px-4 py-4 space-y-3 text-white">
+            {/* Mobile Location Selector */}
+            <div 
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsLocationOpen(true);
+              }}
+              className="flex items-center justify-between py-2 px-3 bg-white/15 rounded-xl text-xs text-white cursor-pointer hover:bg-white/25 transition-colors border border-white/20"
+            >
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-white" />
+                <span>Deliver to: <strong>{currentLocation.city} ({currentLocation.zip})</strong></span>
+              </div>
+              <ChevronDown className="h-3.5 w-3.5 text-white/80" />
+            </div>
+
             {/* Search (Mobile) */}
             <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
