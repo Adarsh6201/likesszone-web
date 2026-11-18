@@ -498,59 +498,6 @@ const StoreLayout = ({ children }) => {
             </div>
           </div>
         )}
-
-        {/* --- Secondary Category Navigation Strip (Amazon-style) --- */}
-        <div className="bg-[#6b0818]/90 backdrop-blur-xs text-white text-xs border-t border-white/10 hidden sm:block">
-          <div className="w-full max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between h-9 overflow-x-auto no-scrollbar gap-2 sm:gap-4">
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0 font-medium">
-              <Link 
-                to="/shop" 
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-md hover:bg-white/10 transition-colors font-bold whitespace-nowrap"
-              >
-                <Menu className="h-3.5 w-3.5" />
-                <span>All Products</span>
-              </Link>
-              <Link 
-                to="/shop?category=computer-accessories-and-components" 
-                className="px-2 py-1 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap"
-              >
-                Computers & Components
-              </Link>
-              <Link 
-                to="/shop?category=camera" 
-                className="px-2 py-1 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap"
-              >
-                Cameras & Optics
-              </Link>
-              <Link 
-                to="/shop?category=electrical" 
-                className="px-2 py-1 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap"
-              >
-                Electrical Supplies
-              </Link>
-              <Link 
-                to="/shop?category=accessories" 
-                className="px-2 py-1 rounded-md hover:bg-white/10 transition-colors whitespace-nowrap"
-              >
-                Accessories & Gear
-              </Link>
-              <Link 
-                to="/shop" 
-                className="flex items-center gap-1 px-2 py-1 rounded-md text-amber-300 hover:bg-white/10 transition-colors font-bold whitespace-nowrap"
-              >
-                <span>⚡ Best Sellers</span>
-              </Link>
-            </div>
-
-            <div className="hidden xl:flex items-center gap-4 text-white/90 shrink-0 text-[11px] font-medium">
-              <span className="flex items-center gap-1">
-                <span className="text-emerald-300 font-bold">🚚 Free Delivery</span> on orders over ₹499
-              </span>
-              <span className="opacity-40">|</span>
-              <span>🛡️ 100% Genuine Certified</span>
-            </div>
-          </div>
-        </div>
       </header>
 
       {/* --- Main Storefront Canvas --- */}
