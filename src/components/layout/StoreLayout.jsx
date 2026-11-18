@@ -9,7 +9,7 @@ import { getImageUrl } from '../../services/api';
 import { 
   ShoppingBag, Search, User, X, Plus, Minus, Trash2, 
   ArrowRight, Shield, LogOut, Sun, Moon, ShoppingCart, Menu, Settings,
-  Phone, MapPin, ChevronDown, Check
+  Phone, MapPin, ChevronDown, Check, Mail, ChevronUp
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
 import AddAddressBottomModal from '../shop/AddAddressBottomModal';
@@ -132,6 +132,12 @@ const StoreLayout = ({ children }) => {
     if (searchQuery.trim()) {
       // Mock navigation to products search
       navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const scrollToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -637,65 +643,156 @@ const StoreLayout = ({ children }) => {
         </div>
       )}
 
-      {/* --- Footer Design --- */}
+      {/* --- Modern E-Commerce Footer --- */}
       <footer className="bg-slate-900 text-slate-400 dark:bg-slate-950 dark:text-slate-400 border-t border-slate-800">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        
+        {/* Back to Top Bar (Amazon Style) */}
+        <button
+          onClick={scrollToTop}
+          type="button"
+          className="w-full py-3 bg-slate-850 hover:bg-slate-800 dark:bg-slate-900 dark:hover:bg-slate-850 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border-b border-slate-800"
+        >
+          <ChevronUp className="h-4 w-4" />
+          <span>Back to Top</span>
+        </button>
+
+        {/* Main Footer Content Container (Full Width Space Optimized) */}
+        <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+            
+            {/* Col 1: Brand & Contact Info */}
             <div className="space-y-4">
-              <span className="text-xl font-bold tracking-tight text-white">Likesszon Shopping</span>
-              <p className="text-sm">Your ultimate online shopping destination for premium computer accessories, electrical equipment, cameras, and unique lifestyle products.</p>
+              <div className="flex items-center gap-2.5">
+                <img 
+                  src={LogoImage?.src || LogoImage || '/logo.png'} 
+                  alt="Likesszon Logo" 
+                  className="h-9 w-9 object-contain rounded-full bg-white p-0.5 shadow-sm shrink-0" 
+                />
+                <span className="text-xl font-bold tracking-tight text-white select-none">Likesszon</span>
+              </div>
               
-              <div className="space-y-2 pt-2 border-t border-slate-800 text-xs">
-                <p className="flex items-center gap-2 text-slate-300 font-semibold">
-                  <Phone className="h-4 w-4 text-indigo-400 shrink-0" />
-                  <span>Contact Us: <a href="tel:9304264241" className="text-white hover:underline">+91 9304264241</a></span>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Your trusted online shopping destination for genuine computer hardware, professional camera & studio gear, and certified electrical supplies.
+              </p>
+              
+              <div className="space-y-2.5 pt-3 border-t border-slate-800 text-xs">
+                <p className="flex items-center gap-2 text-slate-300">
+                  <Phone className="h-4 w-4 text-[#bd1f35] shrink-0" />
+                  <span>Call Us: <a href="tel:9304264241" className="text-white font-semibold hover:underline">+91 9304264241</a></span>
+                </p>
+                <p className="flex items-center gap-2 text-slate-300">
+                  <Mail className="h-4 w-4 text-[#bd1f35] shrink-0" />
+                  <span>Email: <a href="mailto:support@likesszon.com" className="text-white font-semibold hover:underline">support@likesszon.com</a></span>
                 </p>
                 <p className="flex items-start gap-2 text-slate-300 leading-relaxed">
-                  <MapPin className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
-                  <span><strong>Visit Us:</strong> New Area 1St Gali Okni near Joda shiv temple ward 20, Hazaribagh, Jharkhand, 825301</span>
+                  <MapPin className="h-4 w-4 text-[#bd1f35] shrink-0 mt-0.5" />
+                  <span>New Area 1st Gali Okni, Near Joda Shiv Mandir, Ward 20, Hazaribagh, Jharkhand - 825301</span>
                 </p>
               </div>
             </div>
+
+            {/* Col 2: Catalog Categories */}
             <div>
-              <h3 className="text-sm font-semibold text-white tracking-wider uppercase mb-4">Catalog</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link to="/shop?category=computer-accessories-and-components" className="hover:text-white">Computer Accessories</Link></li>
-                <li><Link to="/shop?category=electrical" className="hover:text-white">Electrical</Link></li>
-                <li><Link to="/shop?category=camera" className="hover:text-white">Camera</Link></li>
-                <li><Link to="/shop?category=more-items" className="hover:text-white">More Items</Link></li>
+              <h3 className="text-xs sm:text-sm font-bold text-white tracking-wider uppercase mb-4 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#bd1f35]" />
+                <span>Product Catalog</span>
+              </h3>
+              <ul className="space-y-2.5 text-xs sm:text-sm">
+                <li>
+                  <Link to="/shop?category=computer-accessories-and-components" className="hover:text-white transition-colors">
+                    Computers & Components
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop?category=camera" className="hover:text-white transition-colors">
+                    Cameras & Studio Gear
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop?category=electrical" className="hover:text-white transition-colors">
+                    Electrical Supplies & Wiring
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop?category=accessories" className="hover:text-white transition-colors">
+                    Accessories & Hardware
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop" className="text-[#f17081] font-semibold hover:underline inline-flex items-center gap-1">
+                    Browse All Products →
+                  </Link>
+                </li>
               </ul>
             </div>
+
+            {/* Col 3: Support & Policies */}
             <div>
-              <h3 className="text-sm font-semibold text-white tracking-wider uppercase mb-4">Support & Policies</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link to="/about" className="hover:text-white">About Us</Link></li>
-                <li><Link to="/policies?tab=shipping" className="hover:text-white">Shipping Policy</Link></li>
-                <li><Link to="/policies?tab=returns" className="hover:text-white">Return & Warranty</Link></li>
-                <li><Link to="/policies?tab=terms" className="hover:text-white">Terms & Conditions</Link></li>
-                <li><Link to="/policies?tab=privacy" className="hover:text-white">Privacy Policy</Link></li>
+              <h3 className="text-xs sm:text-sm font-bold text-white tracking-wider uppercase mb-4 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#bd1f35]" />
+                <span>Customer Care</span>
+              </h3>
+              <ul className="space-y-2.5 text-xs sm:text-sm">
+                <li><Link to="/orders" className="hover:text-white transition-colors">Track Your Order</Link></li>
+                <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><Link to="/policies?tab=shipping" className="hover:text-white transition-colors">Shipping & Delivery Policy</Link></li>
+                <li><Link to="/policies?tab=returns" className="hover:text-white transition-colors">Return & Warranty Policy</Link></li>
+                <li><Link to="/policies?tab=terms" className="hover:text-white transition-colors">Terms & Conditions</Link></li>
+                <li><Link to="/policies?tab=privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>
+
+            {/* Col 4: Newsletter & Safe Checkout */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Subscribe to our Newsletter</h3>
-              <p className="text-sm">Sign up to get the latest sales, new releases and catalog updates.</p>
-              <form className="flex gap-2">
+              <h3 className="text-xs sm:text-sm font-bold text-white tracking-wider uppercase flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#bd1f35]" />
+                <span>Stay Connected</span>
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-400">
+                Subscribe to get special discounts, deal alerts, and catalog updates.
+              </p>
+              
+              <form onSubmit={(e) => { e.preventDefault(); alert('Thank you for subscribing to Likesszon updates!'); }} className="flex gap-2">
                 <input
                   type="email"
+                  required
                   placeholder="Enter email address"
-                  className="rounded-lg bg-slate-800 border border-slate-700 px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 w-full"
+                  className="rounded-xl bg-slate-800 border border-slate-700 px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] w-full"
                 />
                 <button 
-                  type="button" 
-                  className="rounded-lg bg-indigo-600 text-white font-semibold text-sm px-4 hover:bg-indigo-700 transition-colors"
+                  type="submit" 
+                  className="rounded-xl bg-gradient-to-r from-[#bd1f35] to-[#8a0025] hover:opacity-95 text-white font-bold text-xs px-4 py-2 transition-all cursor-pointer shrink-0 shadow-sm"
                 >
                   Join
                 </button>
               </form>
+
+              {/* Payment & Security Trust Badges */}
+              <div className="pt-3 border-t border-slate-800 space-y-2">
+                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
+                  100% Safe & Secure Payment
+                </span>
+                <div className="flex flex-wrap items-center gap-2 text-slate-300 text-xs font-semibold">
+                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">UPI</span>
+                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">Cards</span>
+                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">NetBanking</span>
+                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">COD</span>
+                </div>
+              </div>
             </div>
+
           </div>
-          <div className="mt-12 border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs">
+
+          {/* Bottom Bar: Copyright & Assurances */}
+          <div className="mt-10 border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
             <p>&copy; {new Date().getFullYear()} Likesszon Inc. All rights reserved.</p>
-            <p className="mt-4 sm:mt-0">Curated with design-first aesthetics.</p>
+            <div className="flex items-center gap-4 text-[11px] text-slate-400 flex-wrap justify-center">
+              <span>🛡️ 100% Genuine Certified</span>
+              <span>•</span>
+              <span>⚡ Fast All-India Shipping</span>
+              <span>•</span>
+              <span>🔒 256-Bit SSL Encrypted</span>
+            </div>
           </div>
         </div>
       </footer>
