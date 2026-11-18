@@ -60,38 +60,22 @@ const StoreLayout = ({ children }) => {
       
       {/* --- Sticky Storefront Header (#bd1f35 Theme) --- */}
       <header className="sticky top-0 z-40 w-full bg-gradient-to-r from-[#bd1f35] to-[#8a0025] border-b border-[#70001d] shadow-md">
-        <div className="w-full flex h-16 items-center justify-between px-3 sm:px-6 lg:px-8">
+        <div className="w-full flex h-16 items-center justify-between gap-3 sm:gap-4 lg:gap-6 px-3 sm:px-6 lg:px-8">
           
-          {/* Logo & Brand (Far Left) */}
-          <div className="flex items-center gap-4 lg:gap-6 shrink-0">
-            <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
-              <img 
-                src={LogoImage?.src || LogoImage || '/logo.png'} 
-                alt="Likesszon Logo" 
-                className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-full bg-white p-0.5 shadow-sm shrink-0" 
-              />
-              <span className="text-xl sm:text-2xl font-bold tracking-tight text-white select-none">
-                Likesszon
-              </span>
-            </Link>
-            
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium text-white/90">
-              <Link to="/" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Home</Link>
-              <Link to="/shop" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Shop</Link>
-              <Link to="/orders" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">My Orders</Link>
-              <Link to="/about" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">About Us</Link>
-              {mounted && isAdmin && (
-                <Link to="/admin" className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full font-semibold text-xs transition-colors border border-white/30 ml-1">
-                  <Shield className="h-3.5 w-3.5" />
-                  Admin Panel
-                </Link>
-              )}
-            </nav>
-          </div>
+          {/* 1. Logo & Brand Name (Far Left) */}
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <img 
+              src={LogoImage?.src || LogoImage || '/logo.png'} 
+              alt="Likesszon Logo" 
+              className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-full bg-white p-0.5 shadow-sm shrink-0" 
+            />
+            <span className="text-xl sm:text-2xl font-bold tracking-tight text-white select-none">
+              Likesszon
+            </span>
+          </Link>
 
-          {/* Search bar with Search Button */}
-          <div className="hidden sm:flex flex-1 max-w-md mx-3 lg:mx-6">
+          {/* 2. Search bar with Search Button (Directly after Likesszon name) */}
+          <div className="hidden sm:flex flex-1 max-w-md lg:max-w-lg">
             <form onSubmit={handleSearchSubmit} className="relative w-full flex items-center">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none" />
               <input
@@ -110,7 +94,21 @@ const StoreLayout = ({ children }) => {
             </form>
           </div>
 
-          {/* Action Icons & Profile (Right side) */}
+          {/* 3. Navigation Links (Home, Shop, My Orders, About Us, Admin Panel) */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium text-white/90 shrink-0">
+            <Link to="/" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Home</Link>
+            <Link to="/shop" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Shop</Link>
+            <Link to="/orders" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">My Orders</Link>
+            <Link to="/about" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">About Us</Link>
+            {mounted && isAdmin && (
+              <Link to="/admin" className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full font-semibold text-xs transition-colors border border-white/30 ml-1">
+                <Shield className="h-3.5 w-3.5" />
+                Admin Panel
+              </Link>
+            )}
+          </nav>
+
+          {/* 4. Action Icons & Profile (Right side) */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Dark Mode toggle */}
             <button 
