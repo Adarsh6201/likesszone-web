@@ -3,64 +3,57 @@
 import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { useCart } from '../../hooks/useCart';
+import { useSchemes } from '../../hooks/useSchemes';
 import { 
-  ArrowRight, Truck, ShieldCheck, RefreshCw, CreditCard, 
-  ChevronLeft, ChevronRight, Zap, Sparkles, ShoppingBag, Check
+  ArrowRight, Zap, ShoppingBag, Check, Copy, Tag, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductCard from '../../components/shop/ProductCard';
 import { getImageUrl } from '../../services/api';
 
-const promoSlides = [
-  {
-    badge: 'MEGA HARDWARE SALE',
-    title: 'High-Performance PC Hardware & Components',
-    description: 'Upgrade your workstation with enterprise-grade hard drives, AM4/AM5 coolers, and 550W power supplies.',
-    discount: 'UP TO 45% OFF',
-    category: 'computer-accessories-and-components',
-    bgGradient: 'from-slate-950 via-[#3d0812] to-[#bd1f35]',
-    image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1200&auto=format&fit=crop&q=80',
-  },
-  {
-    badge: 'STUDIO & CREATOR GEAR',
-    title: 'Cinema Cameras & Studio Equipment',
-    description: 'Blackmagic cinema cameras, studio lighting, audio monitors, and rugged camera travel gear.',
-    discount: 'CREATOR SPECIALS',
-    category: 'camera',
-    bgGradient: 'from-slate-950 via-slate-900 to-[#8a0025]',
-    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1200&auto=format&fit=crop&q=80',
-  },
-  {
-    badge: 'COMMERCIAL & RESIDENTIAL',
-    title: 'Smart Electricals & Industrial Supplies',
-    description: 'Certified distribution panels, industrial switches, high-lumen floodlights, and wiring solutions.',
-    discount: '100% GENUINE CERTIFIED',
-    category: 'electrical',
-    bgGradient: 'from-slate-950 via-[#2d050c] to-[#a31528]',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
-  },
-];
-
 const Home = () => {
   const { addToCart } = useCart();
   const { products, categories, fetchProducts, fetchCategories } = useProducts();
+  const { schemes, fetchSchemes } = useSchemes();
   const navigate = useNavigate();
 
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [activeTab, setActiveTab] = useState('all');
+  const [copiedCode, setCopiedCode] = useState(null);
+  const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, [fetchProducts, fetchCategories]);
+    fetchSchemes();
+  }, [fetchProducts, fetchCategories, fetchSchemes]);
 
-  // Auto-advance banner slides every 6s
+  // Filter only valid, active promotional schemes & coupons
+  const now = new Date();
+  const activeOffers = (Array.isArray(schemes) ? schemes : []).filter((s) => {
+    if (!s || !s.isActive) return false;
+    if (s.startDate && new Date(s.startDate) > now) return false;
+    if (s.endDate && new Date(s.endDate) < now) return false;
+    return true;
+  });
+
+  // Auto-advance only if multiple active offers exist
   useEffect(() => {
+    if (activeOffers.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % promoSlides.length);
+      setCurrentOfferIndex((prev) => (prev + 1) % activeOffers.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [activeOffers.length]);
+
+  const currentOffer = activeOffers[currentOfferIndex] || activeOffers[0];
+
+  const handleCopyCode = (code, e) => {
+    e.stopPropagation();
+    if (!code) return;
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2500);
+  };
 
   const productList = Array.isArray(products) ? products : [];
   const categoryList = Array.isArray(categories) ? categories : [];
@@ -87,146 +80,90 @@ const Home = () => {
   return (
     <div className="w-full max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 space-y-8 sm:space-y-10 py-4 sm:py-6">
 
-      {/* --- 1. Modern E-Commerce Hero Promo Banner Slider --- */}
-      <section className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 bg-slate-900">
-        <div className="relative h-56 sm:h-72 md:h-80 lg:h-96 w-full">
-          {promoSlides.map((slide, idx) => {
-            const isActive = idx === currentSlide;
-            return (
-              <div
-                key={slide.title}
-                className={`absolute inset-0 transition-opacity duration-700 ease-in-out flex items-center ${
-                  isActive ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
-                }`}
-              >
-                {/* Background image & gradient overlay */}
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="absolute inset-0 h-full w-full object-cover object-center opacity-40 mix-blend-overlay"
-                />
-                <div className={`absolute inset-0 bg-gradient-to-r ${slide.bgGradient} opacity-95`} />
-
-                {/* Content Overlay */}
-                <div className="relative z-10 w-full px-6 sm:px-12 lg:px-16 flex flex-col justify-center max-w-2xl text-white space-y-2.5 sm:space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-white/20 backdrop-blur-xs text-white text-[10px] sm:text-xs font-black tracking-widest uppercase px-2.5 py-1 rounded-full border border-white/30">
-                      {slide.badge}
-                    </span>
-                    <span className="bg-amber-400 text-slate-950 text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-full shadow-sm">
-                      {slide.discount}
-                    </span>
-                  </div>
-
-                  <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
-                    {slide.title}
-                  </h1>
-
-                  <p className="text-xs sm:text-sm text-white/80 line-clamp-2 max-w-lg leading-relaxed">
-                    {slide.description}
-                  </p>
-
-                  <div className="pt-1">
-                    <button
-                      onClick={() => navigate(`/shop?category=${slide.category}`)}
-                      className="bg-white hover:bg-slate-100 text-[#bd1f35] px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all hover:scale-102 active:scale-98 cursor-pointer flex items-center gap-2"
-                    >
-                      Shop Collection
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+      {/* --- Offer & Coupon Banner (ONLY displays when active offers/coupons exist) --- */}
+      {activeOffers.length > 0 && currentOffer && (
+        <section className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-red-200 dark:border-red-900/50 bg-gradient-to-r from-slate-950 via-[#3d0812] to-[#bd1f35] text-white">
+          <div className="relative min-h-[140px] sm:min-h-[180px] w-full p-5 sm:p-7 flex flex-col md:flex-row items-center justify-between gap-5">
+            <div className="space-y-1.5 text-center md:text-left max-w-xl">
+              <div className="inline-flex items-center gap-1.5 bg-amber-400/20 border border-amber-400/40 text-amber-300 text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                <Tag className="h-3 w-3" />
+                <span>ACTIVE PROMOTIONAL OFFER</span>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Carousel Slide Indicators & Controls */}
-        <div className="absolute bottom-3 right-4 z-20 flex items-center gap-2 bg-black/30 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/10">
-          {promoSlides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === currentSlide ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Prev / Next Arrows */}
-        <button
-          onClick={() => setCurrentSlide((prev) => (prev === 0 ? promoSlides.length - 1 : prev - 1))}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 bg-black/30 hover:bg-black/60 text-white backdrop-blur-xs transition-colors hidden sm:flex cursor-pointer"
-          aria-label="Previous Slide"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => setCurrentSlide((prev) => (prev + 1) % promoSlides.length)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 rounded-full p-2 bg-black/30 hover:bg-black/60 text-white backdrop-blur-xs transition-colors hidden sm:flex cursor-pointer"
-          aria-label="Next Slide"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </section>
-
-      {/* --- 2. Trust & Guarantee Badges Strip (Amazon / Flipkart standard) --- */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {[
-          {
-            icon: Truck,
-            title: 'Express 24h Shipping',
-            desc: 'Fast door-to-door delivery across India',
-            color: 'text-[#bd1f35]',
-            bg: 'bg-[#bd1f35]/10',
-          },
-          {
-            icon: ShieldCheck,
-            title: '100% Genuine Hardware',
-            desc: 'Verified parts & manufacturer warranty',
-            color: 'text-emerald-600 dark:text-emerald-400',
-            bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-          },
-          {
-            icon: RefreshCw,
-            title: '7-Day Easy Returns',
-            desc: 'Hassle-free replacement policy',
-            color: 'text-blue-600 dark:text-blue-400',
-            bg: 'bg-blue-50 dark:bg-blue-950/40',
-          },
-          {
-            icon: CreditCard,
-            title: 'Secure Payment & COD',
-            desc: 'Cards, UPI, Netbanking & Cash on Delivery',
-            color: 'text-amber-600 dark:text-amber-400',
-            bg: 'bg-amber-50 dark:bg-amber-950/40',
-          },
-        ].map((item, idx) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={idx}
-              className="flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-[#bd1f35]/30 transition-colors"
-            >
-              <div className={`p-2.5 rounded-xl ${item.bg} ${item.color} shrink-0`}>
-                <Icon className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
-                  {item.title}
-                </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                  {item.desc}
-                </p>
-              </div>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight">
+                {currentOffer.title}
+              </h2>
+              <p className="text-xs sm:text-sm text-white/85">
+                {currentOffer.discountType === 'PERCENTAGE'
+                  ? `Get ${currentOffer.discountValue}% OFF on your purchase`
+                  : `Get FLAT ₹${currentOffer.discountValue} OFF on your order`}
+                {currentOffer.minCartAmount > 0 && ` (Min Cart: ₹${currentOffer.minCartAmount})`}
+                {currentOffer.endDate && (
+                  <span className="text-amber-300 ml-2">
+                    • Valid till {new Date(currentOffer.endDate).toLocaleDateString()}
+                  </span>
+                )}
+              </p>
             </div>
-          );
-        })}
-      </section>
 
-      {/* --- 3. Shop by Category Grid (Modern High-Density Cards) --- */}
+            {/* Coupon Code Pill & Copy Button */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+              <div className="bg-white/10 backdrop-blur-md border border-white/25 rounded-2xl p-2 sm:p-2.5 flex items-center gap-3">
+                <div className="text-left pl-2">
+                  <span className="block text-[9px] uppercase tracking-wider text-white/70 font-semibold">
+                    Coupon Code
+                  </span>
+                  <span className="text-sm sm:text-base font-black tracking-widest text-amber-300 font-mono">
+                    {currentOffer.code}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => handleCopyCode(currentOffer.code, e)}
+                  className="bg-white hover:bg-slate-100 text-[#bd1f35] px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  {copiedCode === currentOffer.code ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />
+                      <span className="text-emerald-600 font-extrabold">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" />
+                      <span>Copy Code</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <Link
+                to="/shop"
+                className="bg-[#bd1f35] hover:bg-[#8a0025] text-white border border-white/20 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-1.5"
+              >
+                <span>Shop Deals</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Controls if multiple active offers exist */}
+          {activeOffers.length > 1 && (
+            <div className="absolute bottom-2 right-4 flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-2 py-0.5 rounded-full border border-white/10">
+              {activeOffers.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentOfferIndex(idx)}
+                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    idx === currentOfferIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/40'
+                  }`}
+                  aria-label={`Go to offer ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* --- 1. Shop by Category Grid (Modern High-Density Cards) --- */}
       <section id="categories" className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -281,7 +218,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- 4. Today's Deals & Trending Products Catalog --- */}
+      {/* --- 2. Today's Deals & Trending Products Catalog --- */}
       <section className="space-y-4">
         {/* Section Header with Live Category Tabs */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
@@ -350,7 +287,7 @@ const Home = () => {
         )}
       </section>
 
-      {/* --- 5. Dedicated Shelf: Computer Hardware & Storage --- */}
+      {/* --- 3. Dedicated Shelf: Computer Hardware & Storage --- */}
       {pcProducts.length > 0 && (
         <section className="space-y-4 pt-2">
           <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
@@ -383,7 +320,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* --- 6. Likesszon Business Advantage Banner --- */}
+      {/* --- 4. Likesszon Business Advantage Banner --- */}
       <section className="rounded-2xl sm:rounded-3xl bg-gradient-to-r from-slate-900 via-slate-850 to-[#bd1f35]/90 border border-slate-800 p-6 sm:p-8 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1.5 max-w-xl">
           <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
