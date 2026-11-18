@@ -53,7 +53,7 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
+            <div className="p-2 rounded-xl bg-[#bd1f35]/10 text-[#bd1f35]">
               <MapPin className="h-5 w-5" />
             </div>
             <div>
@@ -92,7 +92,7 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
                     onClick={() => setFormData((prev) => ({ ...prev, type: item.label }))}
                     className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-500/20'
+                        ? 'border-[#bd1f35] bg-[#bd1f35]/10 text-[#bd1f35] ring-2 ring-[#bd1f35]/20 font-bold'
                         : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                   >
@@ -115,7 +115,7 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
                 placeholder="e.g. Adarsh Kumar"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900 transition-all"
               />
             </div>
             <div className="space-y-1">
@@ -127,7 +127,7 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
                 placeholder="e.g. +91 9876543210"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900 transition-all"
               />
             </div>
           </div>
@@ -142,7 +142,7 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
               placeholder="e.g. Flat 402, Block B, Green Heights Apartment, Outer Ring Road"
               value={formData.address}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900 transition-all"
             />
           </div>
 
@@ -154,10 +154,10 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
                 type="text"
                 name="city"
                 required
-                placeholder="Bengaluru"
+                placeholder="Hazaribagh"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900 transition-all"
               />
             </div>
             <div className="space-y-1">
@@ -165,10 +165,10 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
               <input
                 type="text"
                 name="state"
-                placeholder="Karnataka"
+                placeholder="Jharkhand"
                 value={formData.state}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900 transition-all"
               />
             </div>
             <div className="space-y-1">
@@ -177,10 +177,11 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
                 type="text"
                 name="zip"
                 required
-                placeholder="560103"
+                maxLength={6}
+                placeholder="825301"
                 value={formData.zip}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-indigo-500 focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] focus:bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-900 transition-all"
               />
             </div>
           </div>
@@ -189,7 +190,7 @@ const AddAddressBottomModal = ({ isOpen, onClose, onSaveAddress }) => {
           <div className="pt-3">
             <button
               type="submit"
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-indigo-200 dark:shadow-none transition-all cursor-pointer"
+              className="w-full py-3 bg-gradient-to-r from-[#bd1f35] to-[#8a0025] hover:opacity-95 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-[#bd1f35]/20 transition-all cursor-pointer"
             >
               <Check className="h-4 w-4" /> Save & Deliver Here
             </button>

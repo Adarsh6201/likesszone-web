@@ -12,6 +12,7 @@ import {
   Phone, MapPin, ChevronDown, Check
 } from 'lucide-react';
 import LogoImage from '../../assets/logo.png';
+import AddAddressBottomModal from '../shop/AddAddressBottomModal';
 
 const StoreLayout = ({ children }) => {
   const { user, logout, isAuthenticated, isAdmin, isDarkMode, setIsDarkMode } = useAuth();
@@ -27,7 +28,7 @@ const StoreLayout = ({ children }) => {
 
   // Amazon-style Location State
   const [isLocationOpen, setIsLocationOpen] = useState(false);
-  const [pincodeInput, setPincodeInput] = useState('');
+  const [isAddAddressModalOpen, setIsAddAddressModalOpen] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({ city: 'Hazaribagh', zip: '825301' });
   const [savedAddresses, setSavedAddresses] = useState([]);
   const locationRef = useRef(null);
@@ -94,26 +95,21 @@ const StoreLayout = ({ children }) => {
     setIsLocationOpen(false);
   };
 
-  const handleSelectCity = (city, zip) => {
-    const loc = { city, zip };
+  const handleSaveNewAddress = (newAddr) => {
+    const updated = [newAddr, ...savedAddresses.filter(a => a.id !== newAddr.id)];
+    setSavedAddresses(updated);
+    try {
+      localStorage.setItem('likesszon_saved_addresses', JSON.stringify(updated));
+    } catch (e) {
+      console.error('Error saving addresses:', e);
+    }
+    const loc = { city: newAddr.city || 'Delivery Area', zip: newAddr.zip || '825301' };
     setCurrentLocation(loc);
     try {
       localStorage.setItem('likesszon_delivery_location', JSON.stringify(loc));
     } catch (e) {}
+    setIsAddAddressModalOpen(false);
     setIsLocationOpen(false);
-  };
-
-  const handlePincodeSubmit = (e) => {
-    e.preventDefault();
-    if (pincodeInput.length === 6) {
-      const loc = { city: 'Delivery Area', zip: pincodeInput };
-      setCurrentLocation(loc);
-      try {
-        localStorage.setItem('likesszon_delivery_location', JSON.stringify(loc));
-      } catch (e) {}
-      setPincodeInput('');
-      setIsLocationOpen(false);
-    }
   };
 
   // Load products and categories globally for customer storefront
@@ -128,6 +124,7 @@ const StoreLayout = ({ children }) => {
     setIsProfileOpen(false);
     setMobileMenuOpen(false);
     setIsLocationOpen(false);
+    setIsAddAddressModalOpen(false);
   }, [location.pathname]);
 
   const handleSearchSubmit = (e) => {
@@ -188,7 +185,7 @@ const StoreLayout = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setIsLocationOpen(false)}
-                    className="rounded-full p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 transition-colors"
+                    className="rounded-full p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 transition-colors cursor-pointer"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -198,95 +195,94 @@ const StoreLayout = ({ children }) => {
                   Select a delivery location to check product availability and delivery speeds.
                 </p>
 
-                {/* Saved addresses options (if available) */}
-                {savedAddresses && savedAddresses.length > 0 && (
-                  <div className="mb-3 space-y-1.5 max-h-36 overflow-y-auto pr-1">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      Saved Addresses
-                    </p>
-                    {savedAddresses.map((addr) => {
+                {/* Section Header with Add Address action */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    Saved Addresses {savedAddresses.length > 0 && `(${savedAddresses.length})`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLocationOpen(false);
+                      setIsAddAddressModalOpen(true);
+                    }}
+                    className="text-xs font-bold text-[#bd1f35] hover:text-[#8a0025] flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Add Address
+                  </button>
+                </div>
+
+                {/* Saved addresses list */}
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                  {savedAddresses && savedAddresses.length > 0 ? (
+                    savedAddresses.map((addr) => {
                       const isSelected = currentLocation.zip === addr.zip;
                       return (
                         <div
                           key={addr.id || addr.zip}
                           onClick={() => handleSelectAddress(addr)}
-                          className={`flex items-start justify-between p-2 rounded-xl border text-xs cursor-pointer transition-all ${
+                          className={`flex items-start justify-between p-3 rounded-2xl border text-xs cursor-pointer transition-all ${
                             isSelected
-                              ? 'border-[#bd1f35] bg-[#bd1f35]/5 dark:bg-[#bd1f35]/10 text-slate-900 dark:text-white font-medium'
-                              : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300'
+                              ? 'border-[#bd1f35] bg-[#bd1f35]/5 dark:bg-[#bd1f35]/15 text-slate-900 dark:text-white shadow-xs ring-1 ring-[#bd1f35]/30'
+                              : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300'
                           }`}
                         >
-                          <div className="flex-1 pr-2">
-                            <div className="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white">
-                              <span>{addr.type || 'Home'}</span>
-                              <span className="text-[10px] text-slate-400 font-normal">({addr.zip})</span>
+                          <div className="flex items-start gap-2.5 flex-1 pr-2">
+                            <div className={`mt-0.5 h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                              isSelected 
+                                ? 'border-[#bd1f35] bg-[#bd1f35] text-white' 
+                                : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
+                            }`}>
+                              {isSelected && <Check className="h-2.5 w-2.5 stroke-[3]" />}
                             </div>
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                              {addr.address}, {addr.city}
-                            </p>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
+                                <span>{addr.type || 'Home'}</span>
+                                <span className="text-[10px] text-slate-400 font-normal">({addr.zip})</span>
+                                {isSelected && (
+                                  <span className="text-[9px] font-bold text-[#bd1f35] bg-[#bd1f35]/10 px-1.5 py-0.5 rounded-md">
+                                    Current
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-1 line-clamp-2 leading-relaxed">
+                                {addr.address}, {addr.city}
+                              </p>
+                              {addr.phone && (
+                                <p className="text-[10px] text-slate-400 mt-0.5">
+                                  Phone: {addr.phone}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          {isSelected && <Check className="h-4 w-4 text-[#bd1f35] shrink-0 mt-0.5" />}
                         </div>
                       );
-                    })}
-                  </div>
-                )}
+                    })
+                  ) : (
+                    <div className="text-center py-6 text-slate-400">
+                      <MapPin className="h-8 w-8 mx-auto mb-1 text-slate-300 dark:text-slate-700" />
+                      <p className="text-xs font-semibold">No saved addresses found</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Click Add New Address to add one</p>
+                    </div>
+                  )}
+                </div>
 
-                {/* Enter Pincode form */}
-                <form onSubmit={handlePincodeSubmit} className="mb-3">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                    Or Enter an Indian Pincode
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      placeholder="e.g. 825301"
-                      value={pincodeInput}
-                      onChange={(e) => setPincodeInput(e.target.value.replace(/\D/g, ''))}
-                      className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 text-xs text-slate-900 dark:text-white outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] transition-all"
-                    />
-                    <button
-                      type="submit"
-                      className="bg-[#bd1f35] hover:bg-[#8a0025] text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shadow-sm cursor-pointer"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                </form>
-
-                {/* Popular Delivery Cities */}
-                <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-                    Popular Delivery Locations
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      { city: 'Hazaribagh', zip: '825301' },
-                      { city: 'Ranchi', zip: '834001' },
-                      { city: 'Patna', zip: '800001' },
-                      { city: 'Kolkata', zip: '700001' },
-                      { city: 'Delhi', zip: '110001' },
-                      { city: 'Bengaluru', zip: '560001' }
-                    ].map((c) => (
-                      <button
-                        key={c.zip}
-                        type="button"
-                        onClick={() => handleSelectCity(c.city, c.zip)}
-                        className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
-                          currentLocation.zip === c.zip
-                            ? 'bg-[#bd1f35] text-white border-[#bd1f35] font-semibold'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-transparent hover:border-slate-300 dark:hover:border-slate-700'
-                        }`}
-                      >
-                        {c.city}
-                      </button>
-                    ))}
-                  </div>
+                {/* Prominent Add Address Button */}
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLocationOpen(false);
+                      setIsAddAddressModalOpen(true);
+                    }}
+                    className="w-full py-2.5 px-3 bg-gradient-to-r from-[#bd1f35] to-[#8a0025] hover:opacity-95 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                  >
+                    <Plus className="h-4 w-4" /> Add New Address
+                  </button>
                 </div>
 
                 {/* Footer link */}
-                <div className="mt-3 pt-2 text-center border-t border-slate-100 dark:border-slate-800">
+                <div className="mt-2.5 pt-2 text-center border-t border-slate-100 dark:border-slate-800">
                   {isAuthenticated ? (
                     <Link
                       to="/settings"
@@ -703,6 +699,13 @@ const StoreLayout = ({ children }) => {
           </div>
         </div>
       </footer>
+
+      {/* Add New Address Modal */}
+      <AddAddressBottomModal 
+        isOpen={isAddAddressModalOpen}
+        onClose={() => setIsAddAddressModalOpen(false)}
+        onSaveAddress={handleSaveNewAddress}
+      />
 
     </div>
   );
