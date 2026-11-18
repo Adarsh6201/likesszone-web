@@ -63,16 +63,13 @@ const ProductCard = ({ product, onAddToCart, showDesc = false, btnLabel = 'Add' 
           </span>
         )}
 
-        {/* Out of Stock Overlay Badge */}
+        {/* Out of Stock Corner Ribbon (Bold diagonal ribbon on top-right) */}
         {isOutOfStock ? (
-          <>
-            <span className="absolute top-2 right-2 bg-red-600 text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
-              Out of Stock
-            </span>
-            <span className="absolute bottom-1.5 left-2 text-[9px] font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/70 px-1.5 py-0.5 rounded border border-red-200 dark:border-red-800">
-              Unavailable
-            </span>
-          </>
+          <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none z-10">
+            <div className="absolute top-6 -right-9 w-40 bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white font-black text-[11px] sm:text-xs uppercase tracking-wider py-1.5 text-center shadow-lg transform rotate-45 border-y border-white/25 select-none">
+              OUT OF STOCK
+            </div>
+          </div>
         ) : (
           <span className="absolute bottom-1.5 left-2 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/50">
             Fast Delivery
