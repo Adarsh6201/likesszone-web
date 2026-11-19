@@ -144,8 +144,8 @@ const StoreLayout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200">
       
-      {/* --- Sticky Storefront Header (#bd1f35 Theme) --- */}
-      <header className="sticky top-0 z-40 w-full bg-gradient-to-r from-[#bd1f35] to-[#8a0025] border-b border-[#70001d] shadow-md">
+      {/* --- Sticky Storefront Header (#bd1f35 Theme with 3D Depth) --- */}
+      <header className="sticky top-0 z-40 w-full bg-gradient-to-r from-[#bd1f35] via-[#a3152c] to-[#8a0025] border-b border-[#5e0018] shadow-[0_6px_20px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.22)]">
         <div className="w-full flex h-16 items-center justify-between gap-3 sm:gap-4 lg:gap-6 px-3 sm:px-6 lg:px-8">
           
           {/* 1. Logo & Brand Name (Far Left) */}
@@ -153,9 +153,9 @@ const StoreLayout = ({ children }) => {
             <img 
               src={LogoImage?.src || LogoImage || '/logo.png'} 
               alt="Likesszon Logo" 
-              className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-full bg-white p-0.5 shadow-sm shrink-0" 
+              className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-full bg-white p-0.5 shadow-[0_3px_8px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.9)] shrink-0 transition-transform duration-200 group-hover:scale-105" 
             />
-            <span className="text-xl sm:text-2xl font-bold tracking-tight text-white select-none">
+            <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-white select-none drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]">
               Likesszon
             </span>
           </Link>
@@ -165,15 +165,15 @@ const StoreLayout = ({ children }) => {
             <button
               type="button"
               onClick={() => setIsLocationOpen(!isLocationOpen)}
-              className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-xl hover:bg-white/10 text-left transition-colors text-white group cursor-pointer border border-transparent hover:border-white/20 select-none"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/12 text-left transition-all text-white group cursor-pointer border border-white/10 hover:border-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_2px_5px_rgba(0,0,0,0.18)] active:translate-y-px select-none"
               title="Change Delivery Location"
             >
               <MapPin className="h-4 w-4 text-white/90 group-hover:text-white shrink-0 mt-0.5" />
               <div className="flex flex-col leading-tight">
-                <span className="text-[10px] text-white/75 font-normal truncate max-w-[110px]">
+                <span className="text-[10px] text-white/80 font-normal truncate max-w-[110px]">
                   Deliver to {user?.name ? user.name.split(' ')[0] : 'Guest'}
                 </span>
-                <span className="text-xs font-bold text-white flex items-center gap-0.5 truncate max-w-[130px]">
+                <span className="text-xs font-bold text-white flex items-center gap-0.5 truncate max-w-[130px] drop-shadow-xs">
                   {currentLocation.city} {currentLocation.zip}
                   <ChevronDown className="h-3 w-3 text-white/80 shrink-0 ml-0.5 transition-transform duration-200 group-hover:translate-y-0.5" />
                 </span>
@@ -313,18 +313,18 @@ const StoreLayout = ({ children }) => {
 
           {/* 2. Search bar with Search Button (Directly after Location selector) */}
           <div className="hidden sm:flex flex-1 max-w-md lg:max-w-lg">
-            <form onSubmit={handleSearchSubmit} className="relative w-full flex items-center">
+            <form onSubmit={handleSearchSubmit} className="relative w-full flex items-center shadow-[0_2px_8px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.25)] rounded-full">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search products, brands, collections..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border-none bg-white py-1.5 pl-10 pr-20 text-sm text-slate-900 placeholder:text-slate-400 shadow-inner outline-none focus:ring-2 focus:ring-white/80"
+                className="w-full rounded-full border border-black/10 bg-white py-1.5 pl-10 pr-22 text-sm text-slate-900 placeholder:text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.12)] outline-none focus:ring-2 focus:ring-white/80"
               />
               <button
                 type="submit"
-                className="absolute right-1 top-1 bottom-1 px-3.5 bg-[#bd1f35] hover:bg-[#8a0025] text-white rounded-full text-xs font-semibold flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+                className="absolute right-1 top-1 bottom-1 px-4 bg-gradient-to-b from-[#c9243b] to-[#8a0025] hover:from-[#d62842] hover:to-[#9b1527] text-white rounded-full text-xs font-bold flex items-center justify-center transition-all shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.35)] active:translate-y-px cursor-pointer"
               >
                 Search
               </button>
@@ -332,13 +332,13 @@ const StoreLayout = ({ children }) => {
           </div>
 
           {/* 3. Navigation Links (Home, Shop, My Orders, About Us, Admin Panel) */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium text-white/90 shrink-0">
-            <Link to="/" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Home</Link>
-            <Link to="/shop" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">Shop</Link>
-            <Link to="/orders" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">My Orders</Link>
-            <Link to="/about" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">About Us</Link>
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-semibold text-white/90 shrink-0">
+            <Link to="/" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-all hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] active:translate-y-px">Home</Link>
+            <Link to="/shop" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-all hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] active:translate-y-px">Shop</Link>
+            <Link to="/orders" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-all hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] active:translate-y-px">My Orders</Link>
+            <Link to="/about" className="hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-all hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] active:translate-y-px">About Us</Link>
             {mounted && isAdmin && (
-              <Link to="/admin" className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full font-semibold text-xs transition-colors border border-white/30 ml-1">
+              <Link to="/admin" className="flex items-center gap-1.5 bg-gradient-to-b from-white/25 to-white/15 hover:from-white/35 hover:to-white/20 text-white px-3 py-1 rounded-full font-bold text-xs transition-all border border-white/30 shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.35)] active:translate-y-px ml-1">
                 <Shield className="h-3.5 w-3.5" />
                 Admin Panel
               </Link>
@@ -350,7 +350,7 @@ const StoreLayout = ({ children }) => {
             {/* Dark Mode toggle */}
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)} 
-              className="rounded-full p-2 text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+              className="rounded-full p-2 text-white/90 hover:text-white hover:bg-white/15 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] active:translate-y-px cursor-pointer"
               aria-label="Toggle theme"
             >
               {mounted ? (isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />) : <span className="h-5 w-5 inline-block" />}
@@ -359,12 +359,12 @@ const StoreLayout = ({ children }) => {
             {/* Cart Icon trigger */}
             <button 
               onClick={toggleCart} 
-              className="relative rounded-full p-2 text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+              className="relative rounded-full p-2 text-white/90 hover:text-white hover:bg-white/15 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] active:translate-y-px cursor-pointer"
               aria-label="Open cart"
             >
               <ShoppingBag className="h-5 w-5" />
               {mounted && cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[11px] font-black text-[#bd1f35] ring-2 ring-[#bd1f35] shadow-sm animate-pulse">
+                <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[11px] font-black text-[#bd1f35] ring-2 ring-[#bd1f35] shadow-[0_2px_6px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.9)] animate-pulse">
                   {cartCount}
                 </span>
               )}
@@ -377,18 +377,18 @@ const StoreLayout = ({ children }) => {
               ) : isAuthenticated ? (
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-1.5 focus:outline-none"
+                  className="flex items-center gap-1.5 focus:outline-none cursor-pointer active:translate-y-px transition-transform"
                 >
                   <img 
                     src={user?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'} 
                     alt={user?.name || 'User'} 
-                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full ring-2 ring-white/80 object-cover" 
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full ring-2 ring-white/90 shadow-[0_2px_6px_rgba(0,0,0,0.35)] object-cover" 
                   />
                 </button>
               ) : (
                 <Link 
                   to="/login"
-                  className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white bg-white/15 hover:bg-white/25 px-3.5 py-1.5 rounded-full border border-white/30 transition-all"
+                  className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-b from-white/20 to-white/10 hover:from-white/30 hover:to-white/15 px-3.5 py-1.5 rounded-full border border-white/30 shadow-[0_2px_5px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.25)] active:translate-y-px transition-all"
                 >
                   <User className="h-4 w-4" />
                   <span className="hidden sm:inline">Sign In</span>
@@ -643,14 +643,14 @@ const StoreLayout = ({ children }) => {
         </div>
       )}
 
-      {/* --- Modern E-Commerce Footer --- */}
-      <footer className="bg-slate-900 text-slate-400 dark:bg-slate-950 dark:text-slate-400 border-t border-slate-800">
+      {/* --- Modern Clean E-Commerce Footer (Single Color Graphite Dark Theme) --- */}
+      <footer className="w-full bg-[#0f1117] text-neutral-400 border-t border-[#1e222e]">
         
-        {/* Back to Top Bar (Amazon Style) */}
+        {/* Back to Top Bar */}
         <button
           onClick={scrollToTop}
           type="button"
-          className="w-full py-3 bg-slate-850 hover:bg-slate-800 dark:bg-slate-900 dark:hover:bg-slate-850 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border-b border-slate-800"
+          className="w-full py-3 bg-[#161922] hover:bg-[#1e2330] text-neutral-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border-b border-[#1e222e]"
         >
           <ChevronUp className="h-4 w-4" />
           <span>Back to Top</span>
@@ -668,23 +668,25 @@ const StoreLayout = ({ children }) => {
                   alt="Likesszon Logo" 
                   className="h-9 w-9 object-contain rounded-full bg-white p-0.5 shadow-sm shrink-0" 
                 />
-                <span className="text-xl font-bold tracking-tight text-white select-none">Likesszon</span>
+                <span className="text-xl font-extrabold tracking-tight text-white select-none">
+                  Likesszon
+                </span>
               </div>
               
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
                 Your trusted online shopping destination for genuine computer hardware, professional camera & studio gear, and certified electrical supplies.
               </p>
               
-              <div className="space-y-2.5 pt-3 border-t border-slate-800 text-xs">
-                <p className="flex items-center gap-2 text-slate-300">
+              <div className="p-3.5 rounded-xl bg-[#161922] border border-[#1e222e] space-y-2.5 text-xs">
+                <p className="flex items-center gap-2 text-neutral-200">
                   <Phone className="h-4 w-4 text-[#bd1f35] shrink-0" />
                   <span>Call Us: <a href="tel:9304264241" className="text-white font-semibold hover:underline">+91 9304264241</a></span>
                 </p>
-                <p className="flex items-center gap-2 text-slate-300">
+                <p className="flex items-center gap-2 text-neutral-200">
                   <Mail className="h-4 w-4 text-[#bd1f35] shrink-0" />
                   <span>Email: <a href="mailto:support@likesszon.com" className="text-white font-semibold hover:underline">support@likesszon.com</a></span>
                 </p>
-                <p className="flex items-start gap-2 text-slate-300 leading-relaxed">
+                <p className="flex items-start gap-2 text-neutral-300 leading-relaxed">
                   <MapPin className="h-4 w-4 text-[#bd1f35] shrink-0 mt-0.5" />
                   <span>New Area 1st Gali Okni, Near Joda Shiv Mandir, Ward 20, Hazaribagh, Jharkhand - 825301</span>
                 </p>
@@ -748,7 +750,7 @@ const StoreLayout = ({ children }) => {
                 <span className="h-2 w-2 rounded-full bg-[#bd1f35]" />
                 <span>Stay Connected</span>
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-neutral-400">
                 Subscribe to get special discounts, deal alerts, and catalog updates.
               </p>
               
@@ -757,7 +759,7 @@ const StoreLayout = ({ children }) => {
                   type="email"
                   required
                   placeholder="Enter email address"
-                  className="rounded-xl bg-slate-800 border border-slate-700 px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] w-full"
+                  className="rounded-xl bg-[#161922] border border-[#252a3a] px-3.5 py-2 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-[#bd1f35] focus:ring-1 focus:ring-[#bd1f35] w-full"
                 />
                 <button 
                   type="submit" 
@@ -768,15 +770,19 @@ const StoreLayout = ({ children }) => {
               </form>
 
               {/* Payment & Security Trust Badges */}
-              <div className="pt-3 border-t border-slate-800 space-y-2">
-                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
+              <div className="pt-3 border-t border-[#1e222e] space-y-2">
+                <span className="text-[11px] font-semibold text-neutral-400 block uppercase tracking-wider">
                   100% Safe & Secure Payment
                 </span>
-                <div className="flex flex-wrap items-center gap-2 text-slate-300 text-xs font-semibold">
-                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">UPI</span>
-                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">Cards</span>
-                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">NetBanking</span>
-                  <span className="bg-slate-800 border border-slate-700 px-2 py-1 rounded-md text-[10px]">COD</span>
+                <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+                  {['UPI', 'Cards', 'NetBanking', 'COD'].map((tag) => (
+                    <span 
+                      key={tag}
+                      className="bg-[#161922] border border-[#1e222e] text-neutral-300 px-2.5 py-1 rounded-lg text-[10px]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -784,9 +790,9 @@ const StoreLayout = ({ children }) => {
           </div>
 
           {/* Bottom Bar: Copyright & Assurances */}
-          <div className="mt-10 border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+          <div className="mt-10 border-t border-[#1e222e] pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 gap-3">
             <p>&copy; {new Date().getFullYear()} Likesszon Inc. All rights reserved.</p>
-            <div className="flex items-center gap-4 text-[11px] text-slate-400 flex-wrap justify-center">
+            <div className="flex items-center gap-4 text-[11px] text-neutral-400 flex-wrap justify-center">
               <span>🛡️ 100% Genuine Certified</span>
               <span>•</span>
               <span>⚡ Fast All-India Shipping</span>

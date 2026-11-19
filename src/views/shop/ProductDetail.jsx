@@ -27,14 +27,14 @@ const ProductDetail = () => {
   if (!product) {
     if (!products || products.length === 0) {
       return (
-        <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
+        <div className="w-full max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 py-20 text-center space-y-4">
           <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
           <p className="text-sm font-semibold text-slate-500">Loading product details...</p>
         </div>
       );
     }
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
+      <div className="w-full max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 py-20 text-center space-y-4">
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Product Not Found</h2>
         <p className="text-slate-500">The product you are looking for does not exist or has been removed.</p>
         <button 
@@ -62,7 +62,7 @@ const ProductDetail = () => {
   const youtubeEmbedUrl = getYouTubeEmbedUrl(product.videoUrl);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div className="w-full max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
       
       {/* Category Breadcrumbs */}
       <ProductBreadcrumbs product={product} />
@@ -122,7 +122,7 @@ const ProductDetail = () => {
       <section className="space-y-6 pt-6 border-t border-slate-100 dark:border-slate-800/80">
         <h3 className="text-xl font-bold text-slate-900 dark:text-white">Other Products in Store</h3>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
           {relatedProducts.map((p) => (
             <ProductCard 
               key={p.id}

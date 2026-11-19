@@ -320,35 +320,6 @@ const Home = () => {
         </section>
       )}
 
-      {/* --- 4. Likesszon Business Advantage Banner --- */}
-      <section className="rounded-2xl sm:rounded-3xl bg-gradient-to-r from-slate-900 via-slate-850 to-[#bd1f35]/90 border border-slate-800 p-6 sm:p-8 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1.5 max-w-xl">
-          <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
-            LIKESSZON BUSINESS
-          </span>
-          <h3 className="text-lg sm:text-xl font-bold text-white">
-            Need Bulk Hardware or Commercial Electrical Orders?
-          </h3>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Get GST invoices, corporate tier pricing, and direct distributor fulfillment for your enterprise or retail store.
-          </p>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <Link
-            to="/about"
-            className="px-5 py-2.5 rounded-xl bg-white text-[#bd1f35] font-bold text-xs hover:bg-slate-100 transition-colors shadow-sm"
-          >
-            Learn More
-          </Link>
-          <Link
-            to="/shop"
-            className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/20 transition-colors"
-          >
-            Explore Catalog
-          </Link>
-        </div>
-      </section>
-
     </div>
   );
 };
